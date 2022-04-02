@@ -53,24 +53,17 @@ class class_config:
 		self.local_dir_www = "/var/www/html" # default value for local web folder
 		self.log_buffer_flag = True	 # whether to generate the csv log file as well as the html text file	
 		self.text_buffer_length = 15	# number of lines in the text buffer in the html file	
-	# Ftp
-		self.ftp_creds_filename = "/home/pi/ftp_creds/ftp_creds.csv"
-		self.ftp_log_max_count  = 5
-		self.ftp_timeout = 0.5
-		self.ftplog = 0		# Number of Value Changes before Log File is Saved to remote website, 0 means every change
-	# Sauna
-		self.max_temp =  73.0
-		self.min_temp = 67.0
-		self.min_speed = 40
-		self.max_speed = 100
-		self.min_freq = 2.0
-		self.max_freq = 4.0
-		self.sauna_GPIO_port = 18
+	# Tank
+		self.normal_temp =  73.0
+		self.night_temp = 67.0
+		self.boost_temp = 40
+		self.hysteresis = 100
+		self.day_start = 2.0
+		self.night_start = 4.0
+		self.boost_day = 4.0
+		self.boost_hours = 4.0
+		self.relay_GPIO_port = 18
 		self.sensor4readings = "0315a80584ff"
-	# mqtt
-		self.broker_address = "192.168.0.120" # Change to suite your brokers address
-		self.broker_port = 1883 # Check on server port being used 'sudo netstat -l -t'
-		self.topic = "House/test"
 		
 # End of items set in config.cfg	
 
@@ -96,22 +89,18 @@ class class_config:
 		self.local_dir_www = config_read.get(section, 'local_dir_www')
 		self.log_buffer_flag = config_read.getboolean(section, 'log_buffer_flag')
 		self.text_buffer_length  = int(config_read.get(section, 'text_buffer_length'))		
-		section = "Ftp"
-		self.ftp_creds_filename = config_read.get(section, 'ftp_creds_filename') 
-		self.ftp_log_max_count = float(config_read.get(section, 'ftp_log_max_count'))
-		section = "Sauna"
-		self.max_temp =  float(config_read.get(section, 'max_temp'))
-		self.min_temp =  float(config_read.get(section, 'min_temp'))
-		self.min_speed =  float(config_read.get(section, 'min_speed'))
-		self.max_speed =  float(config_read.get(section, 'max_speed'))
-		self.min_freq =  float(config_read.get(section, 'min_freq'))
-		self.max_freq =  float(config_read.get(section, 'max_freq'))
-		self.sauna_GPIO_port =  int(config_read.get(section, 'sauna_GPIO_port'))
+		section = "Tank"
+		self.normal_temp =  float(config_read.get(section, 'normal_temp'))
+		self.night_temp =  float(config_read.get(section, 'night_temp'))
+		self.boost_temp =  float(config_read.get(section, 'boost_temp'))
+		self.hysteresis =  float(config_read.get(section, 'hysteresis'))
+		self.day_start =  float(config_read.get(section, 'day_start'))
+		self.night_start =  float(config_read.get(section, 'night_start'))
+		self.boost_day =  float(config_read.get(section, 'boost_day'))
+		self.boost_hours =  float(config_read.get(section, 'boost_hours'))
+		self.relay_GPIO_port =  int(config_read.get(section, 'relay_GPIO_port'))
 		self.sensor4readings =  str(config_read.get(section, 'sensor4readings'))
-		section = "mqtt"
-		self.broker_address = str(config_read.get(section, 'broker_address'))
-		self.broker_port = int(config_read.get(section, 'broker_port'))
-		self.topic = str(config_read.get(section, 'topic'))
+
 		return
 
 	def write_file(self):
@@ -127,25 +116,19 @@ class class_config:
 		config_write.set(section, 'local_dir_www',self.local_dir_www)
 		config_write.set(section, 'log_buffer_flag',self.log_buffer_flag)
 		config_write.set(section, 'text_buffer_length',self.text_buffer_length)	
-		section = "Ftp"
-		config_write.add_section(section)
-		config_write.set(section, 'ftp_creds_filename',self.ftp_creds_filename)
-		config_write.set(section, 'ftp_log_max_count',self.ftp_log_max_count)
-		section = "Sauna"	
+		section = "Tank"	
 		config_write.add_section(section)	
-		config_write.set(section, 'max_temp',self.max_temp)
-		config_write.set(section, 'min_temp',self.min_temp)
-		config_write.set(section, 'min_speed',self.min_speed)
-		config_write.set(section, 'max_speed',self.max_speed)		
-		config_write.set(section, 'min_freq',self.min_freq)
-		config_write.set(section, 'max_freq',self.max_freq)
-		config_write.set(section, 'sauna_GPIO_port',self.sauna_GPIO_port)
+		config_write.set(section, 'normal_temp',self.normal_temp)
+		config_write.set(section, 'night_temp',self.night_temp)
+		config_write.set(section, 'boost_temp',self.boost_temp)
+		config_write.set(section, 'hysteresis',self.hysteresis)		
+		config_write.set(section, 'day_start',self.day_start)
+		config_write.set(section, 'night_start',self.night_start)
+		config_write.set(section, 'boost_day',self.boost_day)
+		config_write.set(section, 'boost_hours',self.boost_hours)
+		config_write.set(section, 'relay_GPIO_port',self.relay_GPIO_port)
 		config_write.set(section, 'sensor4readings',self.sensor4readings)
-		section = "mqtt"
-		config_write.add_section(section)
-		config_write.set(section, 'broker_address',self.broker_address)
-		config_write.set(section, 'broker_port',self.broker_port)
-		config_write.set(section, 'topic',self.topic)
+
 		# Writing our configuration file to 'self.config_filename'
 		pr(self.dbug, here, "ready to write new config file with default values: " , self.config_filename)
 		with open(self.config_filename, 'w+') as configfile:
