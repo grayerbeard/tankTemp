@@ -48,6 +48,7 @@ class class_config:
 	# Scan
 		self.scan_delay = 10		# delay in seconds between each scan (not incl sensor responce times)
 		self.max_scans = 0			# number of scans to do, set to zero to scan for ever (until type "ctrl C")
+		self.mustLog = 30			# number of minutes minimum between logging
 	# Log
 		self.log_directory = "log/"	# where to store log files
 		self.local_dir_www = "/var/www/html" # default value for local web folder
@@ -84,6 +85,7 @@ class class_config:
 		section = "Scan"
 		self.scan_delay = float(config_read.get(section, 'scan_delay')) 
 		self.max_scans = float(config_read.get(section, 'max_scans'))
+		self.mustLog = float(config_read.get(section, 'mustLog'))
 		section = "Log"
 		self.log_directory = config_read.get(section, 'log_directory')
 		self.local_dir_www = config_read.get(section, 'local_dir_www')
@@ -110,6 +112,7 @@ class class_config:
 		config_write.add_section(section)
 		config_write.set(section, 'scan_delay',self.scan_delay)
 		config_write.set(section, 'max_scans',self.max_scans)
+		config_write.set(section, 'mustLog',self.mustLog)
 		section = "Log"
 		config_write.add_section(section)
 		config_write.set(section, 'log_directory',self.log_directory)

@@ -29,7 +29,10 @@
 # Third party imports
 from w1thermsensor import W1ThermSensor, Sensor
 # Local application imports
-from utility import pr,make_time_text,send_by_ftp
+from utility import fileexists
+from config import class_config
+from time import sleep as time_sleep
+
 
 class class_my_sensors:
 	def __init__(self,config):
@@ -51,4 +54,34 @@ class class_my_sensors:
 		else:
 			return -100
 
+if __name__ == '__main__':
 
+	from config import class_config
+
+	#Set up Config file and read it in if present
+	config = class_config()
+	if fileexists(config.config_filename):		
+		print( "will try to read Config File : " ,config.config_filename)
+		config.read_file() # overwrites from file
+	else : # no file so file needs to be writen
+		config.write_file()
+		print("New Config File Made with default values, you probably need to edit it")
+	
+	sensor = class_my_sensors(config)
+	print("Sensor Class set up")
+	print("\n")
+	delay = 1
+	limit = 10
+	lastTemp = sensor.get_temp()
+	time_sleep(delay)
+	temp = sensor.get_temp()
+	changeRate = temp - lastTemp
+	for step in range(1,limit+1):
+		temp = sensor.get_temp()
+		tempChange = temp - lastTemp
+		changeRate = changeRate + (0.25 * (tempChange - changeRate))
+		predictedTemp = temp + 3 * changeRate
+		lastTemp = temp	
+		print("step ",step,"   temp ",temp,"   tempChange ",tempChange,"   changeRate " \
+				,round(changeRate,4),"   predictedTemp ",predictedTemp)
+		time_sleep(delay)

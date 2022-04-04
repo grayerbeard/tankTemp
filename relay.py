@@ -22,15 +22,20 @@ class class_relay:
 		GPIO.setwarnings(False)
 		GPIO.setmode(GPIO.BCM)
 
+		# Set Them Up
 		GPIO.setup(self.__relayPort[0],GPIO.OUT)
 		GPIO.setup(self.__relayPort[1],GPIO.OUT)
 		GPIO.setup(self.__relayPort[2],GPIO.OUT)
-
+		
+		# Set all OFF
+		GPIO.output(self.__relayPort[0],GPIO.HIGH)
+		GPIO.output(self.__relayPort[1],GPIO.HIGH)
+		GPIO.output(self.__relayPort[2],GPIO.HIGH)
 
 	def relayOFF(self,relayNumber): # Relay number 1,2 or 3
 		if 0 < int(relayNumber) < 4 :
 			GPIO.output(self.__relayPort[relayNumber - 1],GPIO.HIGH)
-			print("Relay ",relayNumber," now off")
+			#print("Relay ",relayNumber," now off")
 		else:
 			print("Error with relayOFF : ",relayNumber)
 		return False
@@ -38,7 +43,7 @@ class class_relay:
 	def relayON(self,relayNumber): # Relay number 1,2 or 3
 		if 0 < int(relayNumber) < 4 :
 			GPIO.output(self.__relayPort[relayNumber - 1],GPIO.LOW)
-			print("Relay ",relayNumber," now on")
+			#print("Relay ",relayNumber," now on")
 		else:
 			print("Error with relaON : ",relayNumber)
 		return True
@@ -47,6 +52,7 @@ if __name__ == '__main__':
 	relay = class_relay()
 	print("Relay Class set up")
 	print("\n")
+	time.sleep(15)
 	for relayNumber in range(1,4):
 		relay.relayOFF(relayNumber)
 		time.sleep(1)

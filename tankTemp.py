@@ -3,7 +3,7 @@
 # Copyright (C) 2015 Ivmech Mechatronics Ltd. <bilgi@ivmech.com>
 #
 # This is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
+# it under the terms of the OnTimeGNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
@@ -50,8 +50,13 @@ else : # no file so file needs to be writen
 	
 config.scan_count = 0
 logTime= datetime.now()
+boilerTurnOffTime = logTime
+boilerTurnOnTime = logTime
+onTime = 0
+offTime = 0
+
 logType = "log"
-headings = [" Tank Temp","Target Temp","Boiler Status","Message"]
+headings = [" Tank Temp","Per 10 Mins","Predicted Temp","Target Temp","Boiler Status","offTime","onTime","Message"]
 logBuffer = class_text_buffer(headings,config,logType,logTime)
 
 relay = class_relay()
@@ -64,13 +69,36 @@ correction = 7.5
 # Ensure start right by inc buffer
 last_fan_state = True
 buffer_increment_flag = False
-refresh_time = 2*config.scan_delay
+if config.scan_delay > 9:
+	refresh_time = config.scan_delay
+else:
+	refresh_time = 2*config.scan_delay
 message = "No Message"
 print("at Start up Turn Boiler Off")
 boilerON = relay.relayOFF(config.relayNumber)
 
+startHold = True
+lastHoldMin = logTime.minute 
+lastHoldSec = 0
+targetTemp = 0
+programTemp = 0
+increment = True
+changeRate = 0
+lastTemp = sensor.get_temp()
+lastLogTime = logTime
+
 while (config.scan_count <= config.max_scans) or (config.max_scans == 0):
 	try:
+		while startHold:
+			logTime = datetime.now()
+			holdMin = logTime.minute
+			holdSec = logTime.second
+			if holdMin != lastHoldMin:
+				startHold = False
+				break
+			if holdSec > (lastHoldSec + 5):
+				print("Waiting for next Minute : ",(60 - holdSec))
+				lastHoldSec = holdSec
 		# Sort out Time in Day and Day in week etc
 		logTime= datetime.now()
 		dayInWeek = logTime.weekday()
@@ -78,41 +106,93 @@ while (config.scan_count <= config.max_scans) or (config.max_scans == 0):
 		dayTime = config.day_start < hourInDay < config.night_start
 		boostTime = (dayInWeek == config.boost_day) and \
 			( config.day_start < hourInDay < (config.day_start + config.boost_hours))
+			
+		#print("dayInWeek : ",dayInWeek,"  hourInDay : ",hourInDay, \
+		#		"  dayTime : ",dayTime, "  boostTime : ",boostTime)
 		
 		# Work out Target Temperature
 		if boostTime:
-			targetTemp = config.boost_temp
+			if programTemp == config.boost_temp:
+				message = "On Boost, "
+			else:
+				message = "Change to Boost, "
+				increment = True
+				#print("Change to Boost")
+			programTemp = config.boost_temp
 		elif dayTime:
-			targetTemp = config.normal_temp
+			if programTemp == config.normal_temp:
+				message = "On Day Temp, "
+			else:
+				message = "Change to Day, "
+				#print("Change to Day")
+			programTemp = config.normal_temp
 		else:
-			targetTemp = config.night_temp
+			if programTemp == config.night_temp:
+				message = "On Night Temp, "
+			else:
+				message = "Change to Night, "
+				increment = True
+				#print("Change to Night")
+			programTemp = config.night_temp
 
 		# Adjust Target using Hysterises depending if Boiler on
 		if boilerON:
-			targetTemp = targetTemp + config.hysteresis
+			targetTemp = programTemp + config.hysteresis
 		else:
-			targetTemp = targetTemp - config.hysteresis
+			targetTemp = programTemp - config.hysteresis
 		
 		# Do Control
+		
 		temp = sensor.get_temp()
-		if temp >= targetTemp:
-			print("Temp > Target so turn boiler off")
+		tempChange = temp - lastTemp
+		changeRate = changeRate + (0.1 * (tempChange - changeRate))
+		predictedTemp = temp + 10 * changeRate
+		lastTemp = temp
+		
+		if predictedTemp >= targetTemp:
+			if boilerON : # This is a change from ON to OFF
+				#print("Temp NOW > Target so turn boiler off")
+				boilerTurnOffTime = logTime
+				offTime = (boilerTurnOffTime - boilerTurnOnTime).total_seconds() / 60.0
+				increment = True
+				message = message + " Boiler Turned OFF"
 			boilerON = relay.relayOFF(config.relayNumber)
 		else:
-			print("Temp < Target so turn boiler ON")
+			if not boilerON : # This is a change from OFF to ON
+				#print("Temp < Target so turn boiler ON")
+				boilerTurnOnTime = logTime
+				onTime = (boilerTurnOnTime - boilerTurnOffTime).total_seconds() / 60.0
+				increment = True
+				message = message + "Boiler Turned ON"
 			boilerON = relay.relayON(config.relayNumber)
 
 		# Do Logging
 		#" Tank Temp","Target Temp","Boiler Status","Message"]
 		logBuffer.line_values["TankTemp"]  = temp
+		logBuffer.line_values["Per 10 Mins"] = round(changeRate*10*60/config.scan_delay,2)
+		logBuffer.line_values["Predicted Temp"] = round(predictedTemp,2)
 		logBuffer.line_values["Target Temp"]  = targetTemp
 		if boilerON:
 			logBuffer.line_values["Boiler Status"]  = "ON"
 		else:
 			logBuffer.line_values["Boiler Status"]  = "OFF"
+		logBuffer.line_values["onTime"]  = round(onTime,2)
+		logBuffer.line_values["offTime"]  = round(offTime,2)
 		logBuffer.line_values["Message"]  = message
 
-		logBuffer.pr(True,0,logTime,refresh_time)
+		#Ensure logs at least every config.mustLog minutes 
+		timeSinceLog = (logTime - lastLogTime).total_seconds() / 60.0
+		if timeSinceLog > config.mustLog - (config.scan_delay/120):
+			increment = True
+
+
+		if config.scan_count < 5:
+			increment = True
+		logBuffer.pr(increment,0,logTime,refresh_time)
+		if increment:
+			lastLogTime = logTime
+		increment = False
+		message = ""
 
 		# Loop Managemnt
 		loop_end_time = datetime.now()
@@ -127,7 +207,8 @@ while (config.scan_count <= config.max_scans) or (config.max_scans == 0):
 				time_sleep(sleep_time)
 			except KeyboardInterrupt:
 				print(".........Ctrl+C pressed... Output Off")
-				pwm.control_heater(control.freq,0)
+				boilerON = relay.relayOFF(config.relayNumber)
+				print("  ##############  Boiler OFF ################ ")
 				time_sleep(10)
 				sys_exit()
 			except ValueError:
