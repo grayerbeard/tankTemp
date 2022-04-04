@@ -89,9 +89,9 @@ while (config.scan_count <= config.max_scans) or (config.max_scans == 0):
 
 		# Adjust Target using Hysterises depending if Boiler on
 		if boilerON:
-			targetTemp = targetTemp - config.hysteresis
-		else:
 			targetTemp = targetTemp + config.hysteresis
+		else:
+			targetTemp = targetTemp - config.hysteresis
 		
 		# Do Control
 		temp = sensor.get_temp()
