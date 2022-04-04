@@ -76,7 +76,10 @@ class class_text_buffer(object):
 		self.__html_filename = config.prog_name + "_" + self.__config.logType + ".html"
 		self.__html_filename_save_as = config.prog_path + self.__html_filename
 		self.__www_filename = config.local_dir_www + "/" + self.__html_filename
-		self.__ftp_creds = config.ftp_creds_filename
+		try:
+			self.__ftp_creds = config.ftp_creds_filename
+		except:
+			self.__ftp_creds = ""
 		self.__send_html_count = 0
 		self.logFile = ""
 		if self.__config.log_buffer_flag:

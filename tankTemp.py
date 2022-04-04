@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# This file is part of pwm_fanshim.
+# This is for controlling a Hot Water Tank Temperature
 # Copyright (C) 2015 Ivmech Mechatronics Ltd. <bilgi@ivmech.com>
 #
 # This is free software: you can redistribute it and/or modify
@@ -16,10 +16,10 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 # title           :tankTemp.py
-# description     :pwm control for R Pi Cooling Fan, main progrm
+# description     :For controlling Hot water Tank Temperature so as to minimise heating costs
 # author          :David Torrens
-# start date      :2019 12 12
-# version         :0.2 May 2020
+# start date      :2022 04 04
+# version         :0.1 April 2022
 # python_version  :3
 
 # Standard library imports
@@ -34,10 +34,8 @@ from subprocess import call
 # Local application imports
 from config import class_config
 from text_buffer import class_text_buffer
-# Note use of pwm_test possible on next line
-from pwm import class_pwm
+from relay import class_relay
 from utility import fileexists,pr,make_time_text
-from algorithm import class_control
 # Note use of sensor_test possible on next line
 from sensor import class_my_sensors
 
@@ -51,67 +49,74 @@ else : # no file so file needs to be writen
 	print("New Config File Made with default values, you probably need to edit it")
 	
 config.scan_count = 0
+logTime= datetime.now()
+logType = "log"
+headings = [" Tank Temp","Target Temp","Boiler Status","Message"]
+logBuffer = class_text_buffer(headings,config,logType,logTime)
 
-headings = ["Count","Temp","Throttle","Heater Pwm","Pwm Freq","Change","SDLC","Debug Message"]
-log_buffer = class_text_buffer(headings,config)
-
-pwm = class_pwm(config)
-control = class_control(config)
+relay = class_relay()
 sensor = class_my_sensors(config)
 
 # Set The Initial Conditions
 the_end_time = datetime.now()
-last_total = 0
 loop_time = 0
 correction = 7.5
 # Ensure start right by inc buffer
 last_fan_state = True
 buffer_increment_flag = False
-refresh_time = 4.2*config.scan_delay
-shut_down_logic_target_reached = False
-shut_down_logic_last_temp_reading = 20
-shut_down_logic_temp_reducing_count = False
-shut_down_logic_count = 0
-message = "Not Yet"
-print("########################################################################### !!!!! May 11th")
+refresh_time = 2*config.scan_delay
+message = "No Message"
+print("at Start up Turn Boiler Off")
+boilerON = relay.relayOFF(config.relayNumber)
 
 while (config.scan_count <= config.max_scans) or (config.max_scans == 0):
 	try:
-		# Loop Management and Watchdog
-		loop_start_time = datetime.now()
+		# Sort out Time in Day and Day in week etc
+		logTime= datetime.now()
+		dayInWeek = logTime.weekday()
+		hourInDay = logTime.hour
+		dayTime = config.day_start < hourInDay < config.night_start
+		boostTime = (dayInWeek == config.boost_day) and \
+			( config.day_start < hourInDay < (config.day_start + config.boost_hours))
 		
-		# Control
-		temp = sensor.get_temp()
-		control.calc(temp)
-		pwm.control_heater(control.freq,control.speed)
-		
-		# Shutdown Logics
-		change = round(temp - shut_down_logic_last_temp_reading,3)
-		if temp > config.min_temp:
-			shut_down_logic_target_reached = True
-			message = "Over Min Temp and loop time Correction is: " + str(round(correction,2))
-			shut_down_logic_count = 0 
+		# Work out Target Temperature
+		if boostTime:
+			targetTemp = config.boost_temp
+		elif dayTime:
+			targetTemp = config.normal_temp
 		else:
-			message = "Under Min Temp and loop time Correction is: " + str(round(correction,2))
-		if (control.throttle == 100) and shut_down_logic_target_reached and (temp < shut_down_logic_last_temp_reading):
-			shut_down_logic_count += 1
+			targetTemp = config.night_temp
 
-		shut_down_logic_last_temp_reading = temp
+		# Adjust Target using Hysterises depending if Boiler on
+		if boilerON:
+			targetTemp = targetTemp - config.hysteresis
+		else:
+			targetTemp = targetTemp + config.hysteresis
 		
-		
-	
+		# Do Control
+		temp = sensor.get_temp()
+		if temp >= targetTemp:
+			print("Temp > Target so turn boiler off")
+			boilerON = relay.relayOFF(config.relayNumber)
+		else:
+			print("Temp < Target so turn boiler ON")
+			boilerON = relay.relayON(config.relayNumber)
 
-		  logBuffer.line_values["TankTemp"]  = 	
+		# Do Logging
+		#" Tank Temp","Target Temp","Boiler Status","Message"]
+		logBuffer.line_values["TankTemp"]  = temp
+		logBuffer.line_values["Target Temp"]  = targetTemp
+		if boilerON:
+			logBuffer.line_values["Boiler Status"]  = "ON"
+		else:
+			logBuffer.line_values["Boiler Status"]  = "OFF"
+		logBuffer.line_values["Message"]  = message
 
-		log_buffer.pr(True,0,loop_start_time,refresh_time)
-		
-		#do Shutdown if temperature keeps dropping and target reached
-		if  shut_down_logic_count > 10 :
-			call("sudo shutdown -h now", shell=True)
-	
+		logBuffer.pr(True,0,logTime,refresh_time)
+
 		# Loop Managemnt
 		loop_end_time = datetime.now()
-		loop_time = (loop_end_time - loop_start_time).total_seconds()
+		loop_time = (loop_end_time - logTime).total_seconds()
 		config.scan_count += 1
 		
 		# Adjust the sleep time to aceive the target loop time and apply
@@ -148,7 +153,6 @@ while (config.scan_count <= config.max_scans) or (config.max_scans == 0):
 			# print("Error correcting OK, Error : ",error,"  Correction : ", correction)
 	except KeyboardInterrupt:
 		print(".........Ctrl+C pressed... Output Off")
-		pwm.control_heater(control.freq,0)
 		time_sleep(10) 
 		sys_exit()
 

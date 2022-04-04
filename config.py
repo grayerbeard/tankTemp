@@ -40,10 +40,10 @@ from sys import argv as sys_argv
 #from w1thermsensor import W1ThermSensor
 
 # Local application imports
-from utility import pr,make_time_text,send_by_ftp
+#from utility import pr,make_time_text,send_by_ftp
 
 class class_config:
-	def __init__(self,logTime):
+	def __init__(self):
 # Start of items set in config.cfg
 	# Scan
 		self.scan_delay = 10		# delay in seconds between each scan (not incl sensor responce times)
@@ -52,18 +52,18 @@ class class_config:
 		self.log_directory = "log/"	# where to store log files
 		self.local_dir_www = "/var/www/html" # default value for local web folder
 		self.log_buffer_flag = True	 # whether to generate the csv log file as well as the html text file	
-		self.text_buffer_length = 15	# number of lines in the text buffer in the html file	
+		self.text_buffer_length = 30	# number of lines in the text buffer in the html file	
 	# Tank
-		self.normal_temp =  73.0
-		self.night_temp = 67.0
-		self.boost_temp = 40
-		self.hysteresis = 100
-		self.day_start = 2.0
-		self.night_start = 4.0
-		self.boost_day = 4.0
-		self.boost_hours = 4.0
-		self.relay_GPIO_port = 18
-		self.sensor4readings = "0315a80584ff"
+		self.normal_temp =  50.0
+		self.night_temp = 35.0
+		self.boost_temp = 65
+		self.hysteresis = 3
+		self.day_start = 6
+		self.night_start = 9
+		self.boost_day = 5
+		self.boost_hours = 2
+		self.relayNumber = 1
+		self.sensor4readings = "031565de91ff"
 		
 # End of items set in config.cfg	
 
@@ -98,7 +98,7 @@ class class_config:
 		self.night_start =  float(config_read.get(section, 'night_start'))
 		self.boost_day =  float(config_read.get(section, 'boost_day'))
 		self.boost_hours =  float(config_read.get(section, 'boost_hours'))
-		self.relay_GPIO_port =  int(config_read.get(section, 'relay_GPIO_port'))
+		self.relayNumber =  int(config_read.get(section, 'relayNumber'))
 		self.sensor4readings =  str(config_read.get(section, 'sensor4readings'))
 
 		return
@@ -126,7 +126,7 @@ class class_config:
 		config_write.set(section, 'night_start',self.night_start)
 		config_write.set(section, 'boost_day',self.boost_day)
 		config_write.set(section, 'boost_hours',self.boost_hours)
-		config_write.set(section, 'relay_GPIO_port',self.relay_GPIO_port)
+		config_write.set(section, 'relayNumber',self.relayNumber)
 		config_write.set(section, 'sensor4readings',self.sensor4readings)
 
 		# Writing our configuration file to 'self.config_filename'

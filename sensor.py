@@ -27,8 +27,7 @@
 # None
 
 # Third party imports
-from w1thermsensor import W1ThermSensor
-
+from w1thermsensor import W1ThermSensor, Sensor
 # Local application imports
 from utility import pr,make_time_text,send_by_ftp
 
@@ -40,12 +39,13 @@ class class_my_sensors:
 		# gets the temperature of the sensor for readings	
 		found = False
 		sensors = W1ThermSensor.get_available_sensors()
-		for individual_sensor in W1ThermSensor.get_available_sensors():
-			if self.sensor4readings == individual_sensor.id:
-				temp = individual_sensor.get_temperature()
+		for sensor in W1ThermSensor.get_available_sensors([Sensor.DS18B20]):
+			sensor.id, sensor.get_temperature()
+			if self.sensor4readings == sensor.id:
+				temp = sensor.get_temperature()
 				found = True
 			else:
-				print("Found other sensor code : ",individual_sensor.id, "  please correct entry in config.cfg")
+				print("Found other sensor code : ",sensor.id, "  please correct entry in config.cfg")
 		if found:
 			return temp
 		else:

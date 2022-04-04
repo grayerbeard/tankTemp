@@ -1,0 +1,5 @@
+Time, Tank Temp,Target Temp,Boiler Status,Message,
+2022-04-04 01:23:18.783,34.6875,38.0,ON,No Message,
+2022-04-04 01:23:28.784,34.6875,32.0,OFF,No Message,
+2022-04-04 01:23:38.785,34.6875,38.0,ON,No Message,
+2022-04-04 01:23:48.786,34.6875,32.0,OFF,No Message,
