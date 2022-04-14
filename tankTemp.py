@@ -52,11 +52,12 @@ config.scan_count = 0
 logTime= datetime.now()
 boilerTurnOffTime = logTime
 boilerTurnOnTime = logTime
+overRunStartTime = logTime
 onTime = 0
 offTime = 0
 
 logType = "log"
-headings = ["Hour in Day"," Tank Temp","Per 10 Mins","Predicted Temp","Target Temp","Boiler Status","offTime","onTime","Message"]
+headings = ["Hour in Day"," Tank Temp","Per 10 Mins","Predicted Temp","Target Temp","Boiler Status","Pump Status","offTime","onTime","Message"]
 logBuffer = class_text_buffer(headings,config,logType,logTime)
 
 relay = class_relay()
@@ -75,7 +76,9 @@ else:
 	refresh_time = 2*config.scan_delay
 message = "No Message"
 print("at Start up Turn Boiler Off")
-boilerON = relay.relayOFF(config.relayNumber)
+boilerOn = relay.relayOFF(config.boilerRelayNumber)
+pumpOn = relay.relayOFF(config.pumpRelayNumber)
+print("At start pump status :  ",pumpOn)
 
 startHold = True
 lastHoldMin = logTime.minute 
@@ -87,6 +90,9 @@ changeRate = 0
 lastTemp = sensor.get_temp()
 lastLogTime = logTime
 predictedTemp = 0
+overRun = False
+overRunLogCount = 0
+
 
 while (config.scan_count <= config.max_scans) or (config.max_scans == 0):
 	try:
@@ -106,6 +112,26 @@ while (config.scan_count <= config.max_scans) or (config.max_scans == 0):
 		dayInWeek = logTime.weekday()
 		hourInDay = logTime.hour + (logTime.minute/60)
 		dayTime = config.day_start <= hourInDay <= config.night_start
+		pumpOverRunTime = (logTime - overRunStartTime).total_seconds() / 60.0
+		if (pumpOverRunTime > config.pumpOverRunMinutes) and overRun:
+			#pumpOverRunTime = 0
+			pumpOn = relay.relayOFF(config.pumpRelayNumber)	
+			overRun = False
+			increment = True
+			message = "End of Pump Overrun, "
+			overRunLogCount = 0
+		elif pumpOn and overRun:
+			message = "Pump on OverRun, "
+		else:
+			message = ""
+		
+		# Trigger Logs more often during OverRun
+		if pumpOn and overRun:
+			overRunLogCount += 1
+		if overRunLogCount > 2 :
+			increment = True
+			overRunLogCount = 0
+
 		#print("Hour in Time",hourInDay,config.day_start)
 		#if config.day_start  <= hourInDay:
 		#	print("greater tha or equal start")
@@ -117,36 +143,36 @@ while (config.scan_count <= config.max_scans) or (config.max_scans == 0):
 		boostTime = (dayInWeek == config.boost_day) and \
 			( config.day_start < hourInDay < (config.day_start + config.boost_hours))
 			
-		#print("dayInWeek : ",dayInWeek,"  hourInDay : ",hourInDay, \
-		#		"  dayTime : ",dayTime, "  boostTime : ",boostTime)
+		print("dayInWeek : ",dayInWeek,"  hourInDay : ",hourInDay, \
+				"  dayTime : ",dayTime, "  boostTime : ",boostTime)
 		
 		# Work out Target Temperature
 		if boostTime:
 			if programTemp == config.boost_temp:
-				message = "On Boost, "
+				message = message + "On Boost, "
 			else:
-				message = "Change to Boost, "
+				message = message + "Change to Boost, "
 				increment = True
-				#print("Change to Boost")
+				print("Change to Boost")
 			programTemp = config.boost_temp
 		elif dayTime:
 			if programTemp == config.normal_temp:
-				message = "On Day Temp, "
+				message = message + "On Day Temp, "
 			else:
-				message = "Change to Day, "
+				message = message + "Change to Day, "
 				#print("Change to Day")
 			programTemp = config.normal_temp
 		else:
 			if programTemp == config.night_temp:
-				message = "On Night Temp, "
+				message = message + "  On Night Temp, "
 			else:
-				message = "Change to Night, "
+				message = message + "Change to Night, "
 				increment = True
 				#print("Change to Night")
 			programTemp = config.night_temp
 
 		# Adjust Target using Hysterises depending if Boiler on
-		if boilerON:
+		if boilerOn:
 			targetTemp = programTemp + config.hysteresis
 		else:
 			targetTemp = programTemp - config.hysteresis
@@ -156,29 +182,36 @@ while (config.scan_count <= config.max_scans) or (config.max_scans == 0):
 		temp = sensor.get_temp()
 		if temp < 0 : # No Senso Connected
 			print("no Senso connected will turn Boiler Off")
-			boilerON = relay.relayOFF(config.relayNumber)
+			boilerOn = relay.relayOFF(config.boilerRelayNumber)
+			pumpOn = relay.relayOFF(config.pumpRelayNumber)
 		else:
 			tempChange = temp - lastTemp
 			changeRate = changeRate + (0.1 * (tempChange - changeRate))
-			predictedTemp = temp + 15 * changeRate
+			predictedTemp = temp + 20 * changeRate
 			lastTemp = temp
 			
 			if predictedTemp >= targetTemp:
-				if boilerON : # This is a change from ON to OFF
+				if boilerOn : # This is a change from ON to OFF
 					#print("Temp NOW > Target so turn boiler off")
 					boilerTurnOffTime = logTime
+					overRunStartTime = logTime
+					pumpOn = relay.relayON(config.pumpRelayNumber)
+					overRun = True
 					offTime = (boilerTurnOffTime - boilerTurnOnTime).total_seconds() / 60.0
+					pumpOverRunTime = (logTime - overRunStartTime).total_seconds() / 60.0
 					increment = True
-					message = message + " Boiler Turned OFF"
-				boilerON = relay.relayOFF(config.relayNumber)
+					message = message + " Boiler Turned OFF  Pump ON Overrun StartP"
+				boilerOn = relay.relayOFF(config.boilerRelayNumber)
 			else:
-				if not boilerON : # This is a change from OFF to ON
+				if not boilerOn : # This is a change from OFF to ON
 					#print("Temp < Target so turn boiler ON")
 					boilerTurnOnTime = logTime
+					pumpOverRunStartTime = logTime
 					onTime = (boilerTurnOnTime - boilerTurnOffTime).total_seconds() / 60.0
 					increment = True
-					message = message + "Boiler Turned ON"
-				boilerON = relay.relayON(config.relayNumber)
+					message = message + "Boiler Turned and Pump ON"
+				boilerOn = relay.relayON(config.boilerRelayNumber)
+				pumpOn = relay.relayON(config.pumpRelayNumber)
 
 		# Do Logging
 		#" Tank Temp","Target Temp","Boiler Status","Message"]
@@ -187,10 +220,16 @@ while (config.scan_count <= config.max_scans) or (config.max_scans == 0):
 		logBuffer.line_values["Per 10 Mins"] = round(changeRate*10*60/config.scan_delay,2)
 		logBuffer.line_values["Predicted Temp"] = round(predictedTemp,2)
 		logBuffer.line_values["Target Temp"]  = targetTemp
-		if boilerON:
+		if boilerOn:
 			logBuffer.line_values["Boiler Status"]  = "ON"
 		else:
 			logBuffer.line_values["Boiler Status"]  = "OFF"
+		if pumpOn and overRun:
+			logBuffer.line_values["Pump Status"] = "ON Over Run for :" + str(round(pumpOverRunTime,2))
+		elif pumpOn:
+			logBuffer.line_values["Pump Status"] = "ON"
+		else:
+			logBuffer.line_values["Pump Status"] = "OFF"
 		logBuffer.line_values["onTime"]  = round(onTime,2)
 		logBuffer.line_values["offTime"]  = round(offTime,2)
 		logBuffer.line_values["Message"]  = message
@@ -222,8 +261,16 @@ while (config.scan_count <= config.max_scans) or (config.max_scans == 0):
 				time_sleep(sleep_time)
 			except KeyboardInterrupt:
 				print(".........Ctrl+C pressed... Output Off")
-				boilerON = relay.relayOFF(config.relayNumber)
-				print("  ##############  Boiler OFF ################ ")
+				if boilerOn or pumpOn:
+					boilerOn = relay.relayOFF(config.boilerRelayNumber)
+					pumpOn = relay.relayON(config.pumpRelayNumber)
+					print("Running Pump for 60 seconds because boiler was on")
+					time_sleep(60) 
+				else:
+					print("Switching off Pump and Boiler")
+					boilerOn = relay.relayOFF(config.boilerRelayNumber)
+					pumpOn = relay.relayOFF(config.pumpRelayNumber)			
+					time_sleep(10)
 				time_sleep(10)
 				sys_exit()
 			except ValueError:
@@ -249,7 +296,15 @@ while (config.scan_count <= config.max_scans) or (config.max_scans == 0):
 			# print("Error correcting OK, Error : ",error,"  Correction : ", correction)
 	except KeyboardInterrupt:
 		print(".........Ctrl+C pressed... Output Off")
-		time_sleep(10) 
+		if boilerOn or pumpOn:
+			boilerOn = relay.relayOFF(config.boilerRelayNumber)
+			pumpOn = relay.relayON(config.pumpRelayNumber)
+			print("Running Pump for 60 seconds because boiler was on")
+			time_sleep(60) 
+		else:
+			boilerOn = relay.relayOFF(config.boilerRelayNumber)
+			pumpOn = relay.relayOFF(config.pumpRelayNumber)			
+			time_sleep(10)
 		sys_exit()
 
 	

@@ -58,12 +58,14 @@ class class_config:
 		self.normal_temp =  50.0
 		self.night_temp = 35.0
 		self.boost_temp = 65
-		self.hysteresis = 3
+		self.hysteresis = 1
 		self.day_start = 6
 		self.night_start = 9
-		self.boost_day = 5
-		self.boost_hours = 2
-		self.relayNumber = 1
+		self.boost_day = 1
+		self.boost_hours = 4
+		self.boilerRelayNumber = 1
+		self.pumpRelayNumber = 2
+		self.pumpOverRunMinutes = 3
 		self.sensor4readings = "031565de91ff"
 		
 # End of items set in config.cfg	
@@ -100,7 +102,9 @@ class class_config:
 		self.night_start =  int(config_read.get(section, 'night_start'))
 		self.boost_day =  int(config_read.get(section, 'boost_day'))
 		self.boost_hours =  int(config_read.get(section, 'boost_hours'))
-		self.relayNumber =  int(config_read.get(section, 'relayNumber'))
+		self.boilerRelayNumber =  int(config_read.get(section, 'boilerRelayNumber'))
+		self.pumpRelayNumber =  int(config_read.get(section, 'pumpRelayNumber'))
+		self.pumpOverRunMinutes =  int(config_read.get(section, 'pumpOverRunMinutes'))
 		self.sensor4readings =  str(config_read.get(section, 'sensor4readings'))
 
 		return
@@ -129,7 +133,9 @@ class class_config:
 		config_write.set(section, 'night_start',self.night_start)
 		config_write.set(section, 'boost_day',self.boost_day)
 		config_write.set(section, 'boost_hours',self.boost_hours)
-		config_write.set(section, 'relayNumber',self.relayNumber)
+		config_write.set(section, 'boilerRelayNumber',self.boilerRelayNumber)
+		config_write.set(section, 'pumpRelayNumber',self.pumpRelayNumber)
+		config_write.set(section, 'pumpOverRunMinutes',self.pumpOverRunMinutes)
 		config_write.set(section, 'sensor4readings',self.sensor4readings)
 
 		# Writing our configuration file to 'self.config_filename'
