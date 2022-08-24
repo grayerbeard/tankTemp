@@ -55,6 +55,13 @@ class class_config:
 		self.log_buffer_flag = True	 # whether to generate the csv log file as well as the html text file	
 		self.text_buffer_length = 30	# number of lines in the text buffer in the html file	
 	# Tank
+		self.program0 = (30, 6,45, 7,30, 19,45, 20,30)  # Edit Monday Times and temperatures
+		self.program1 = (30, 6,45, 7,30, 19,45, 20,30)  # Edit Tuesday Times and temperatures
+		self.program2 = (30, 6,45, 7,30, 19,45, 20,30)  # Edit Wednesday Times and temperatures
+		self.program3 = (30, 6,45, 7,30, 19,45, 20,30)  # Edit Thursday Times and temperatures
+		self.program4 = (30, 6,45, 7,30, 19,45, 20,30)  # Edit Friday Times and temperatures
+		self.program5 = (30, 6,45, 7,30, 19,45, 20,30)  # Edit Saturday Times and temperatures
+		self.program6 = (30, 6,45, 7,30, 19,45, 20,30)  # Edit Sunday Times and temperatures
 		self.normal_temp =  50.0
 		self.night_temp = 35.0
 		self.boost_temp = 65
@@ -94,6 +101,13 @@ class class_config:
 		self.log_buffer_flag = config_read.getboolean(section, 'log_buffer_flag')
 		self.text_buffer_length  = int(config_read.get(section, 'text_buffer_length'))		
 		section = "Tank"
+		self.program0 =  config_read.get(section, 'program0').split(",")
+		self.program1 =  config_read.get(section, 'program1').split(",")
+		self.program2 =  config_read.get(section, 'program2').split(",")
+		self.program3 =  config_read.get(section, 'program3').split(",")
+		self.program4 =  config_read.get(section, 'program4').split(",")
+		self.program5 =  config_read.get(section, 'program5').split(",")
+		self.program6 =  config_read.get(section, 'program6').split(",")
 		self.normal_temp =  float(config_read.get(section, 'normal_temp'))
 		self.night_temp =  float(config_read.get(section, 'night_temp'))
 		self.boost_temp =  float(config_read.get(section, 'boost_temp'))
@@ -124,7 +138,20 @@ class class_config:
 		config_write.set(section, 'log_buffer_flag',self.log_buffer_flag)
 		config_write.set(section, 'text_buffer_length',self.text_buffer_length)	
 		section = "Tank"	
-		config_write.add_section(section)	
+		config_write.add_section(section)
+		program0AsString  =",".join(map(str,self.program0))
+		config_write.set(section, 'program0',program0AsString)
+		program0AsString  =",".join(map(str,self.program0))
+		config_write.set(section, 'program0',program0AsString)
+		program0AsString  =",".join(map(str,self.program0))
+		config_write.set(section, 'program0',program0AsString)
+		program0AsString  =",".join(map(str,self.program0))
+		config_write.set(section, 'program0',program0AsString)
+		program0AsString  =",".join(map(str,self.program0))
+		config_write.set(section, 'program0',program0AsString)
+		program0AsString  =",".join(map(str,self.program0))
+		config_write.set(section, 'program0',program0AsString)
+
 		config_write.set(section, 'normal_temp',self.normal_temp)
 		config_write.set(section, 'night_temp',self.night_temp)
 		config_write.set(section, 'boost_temp',self.boost_temp)

@@ -48,6 +48,34 @@ else : # no file so file needs to be writen
 	config.write_file()
 	print("New Config File Made with default values, you probably need to edit it")
 	
+print ("0",config.program0)
+print ("1",config.program1)
+print ("2",config.program2)
+print ("3",config.program3)
+print ("4",config.program4)
+print ("5",config.program5)
+print ("6",config.program6)
+
+
+program = [[0] for i in range(7)]
+
+for item in config.program0:
+	program[0].append(int(item))
+for item in config.program1:
+	program[1].append(int(item))
+for item in config.program2:
+	program[2].append(int(item))
+for item in config.program3:
+	program[3].append(int(item))
+for item in config.program4:
+	program[4].append(int(item))
+for item in config.program5:
+	program[5].append(int(item))
+for item in config.program6:
+	program[6].append(int(item))	
+print (program)
+		
+	
 config.scan_count = 0
 logTime= datetime.now()
 boilerTurnOffTime = logTime
@@ -122,6 +150,23 @@ while (config.scan_count <= config.max_scans) or (config.max_scans == 0):
 		hourInDay = logTime.hour + (logTime.minute/60)
 		dayTime = config.day_start <= hourInDay <= config.night_start
 		pumpOverRunTime = (logTime - overRunStartTime).total_seconds() / 60.0
+		
+
+		numValues = len(program[dayInWeek])
+		ind = 0
+		while ind<(numValues):
+			progHour = program[dayInWeek][ind]
+			if (ind + 2) < numValues:
+				nextProgHour = program[dayInWeek][ind + 2]
+			else:
+				nextProgHour = 24
+			progTemp = program[dayInWeek][ind + 1]
+			if progHour < hourInDay < nextProgHour:
+				targetTemp = progTemp
+				#print("targetTemp is: ",targetTemp,"from : ",progHour," to : ",nextProgHour)
+			ind +=2
+		message = "day: " + str(dayInWeek) + " hour: " + str(round(hourInDay,2)) + " TargTemp: " + str(targetTemp)
+
 		if (pumpOverRunTime > config.pumpOverRunMinutes) and overRun:
 			#pumpOverRunTime = 0
 			pumpOn = relay.relayOFF(config.pumpRelayNumber)	
@@ -130,12 +175,12 @@ while (config.scan_count <= config.max_scans) or (config.max_scans == 0):
 			increment = True
 			reason = reason + "OverRunStart,"
 			
-			message = "End of Pump Overrun, "
+			message = message + " End of Pump Overrun, "
 			overRunLogCount = 0
 		elif pumpOn and overRun:
-			message = "Pump on OverRun, "
+			message = message + " Pump on OverRun, "
 		else:
-			message = ""
+			message = message
 		
 		# Trigger Logs more often during OverRun
 		if pumpOn and overRun:
@@ -147,57 +192,10 @@ while (config.scan_count <= config.max_scans) or (config.max_scans == 0):
 
 			overRunLogCount = 0
 
-		#print("Hour in Time",hourInDay,config.day_start)
-		#if config.day_start  <= hourInDay:
-		#	print("greater tha or equal start")
-		#	if hourInDay <= config.night_start:
-		#		print("less than night start")
-		#		dayTime = True
-		#else:
-		#	print(hourInDay,"    not greater than   ",config.day_start)
-		boostTime = (dayInWeek == config.boost_day) and \
-			( config.day_start < hourInDay < (config.day_start + config.boost_hours))
-			
-		#print("dayInWeek : ",dayInWeek,"  hourInDay : ",round(hourInDay,2), \
-		#		"  dayTime : ",dayTime, "  boostTime : ",boostTime)
-		
-		# Work out Target Temperature
-		
-		if boostTime:
-			if programTemp == config.boost_temp:
-				message = message + "On Boost, "
-			else:
-				message = message + "Change to Boost, "
-				
-				increment = True
-				reason = reason + "BoostOn,"
-
-				print("Change to Boost")
-			programTemp = config.boost_temp
-		elif dayTime:
-			if programTemp == config.normal_temp:
-				message = message + "On Day Temp, "
-			else:
-				message = message + "Change to Day, "
-				#print("Change to Day")
-			programTemp = config.normal_temp
-		else:
-			if programTemp == config.night_temp:
-				message = message + "  On Night Temp, "
-			else:
-				message = message + "Change to Night, "
-				
-				increment = True
-				reason = reason + "Change to Night"
-
-				#print("Change to Night")
-			programTemp = config.night_temp
-
-		# Adjust Target using Hysterises depending if Boiler on
 		if boilerOn:
-			targetTemp = programTemp + config.hysteresis
+			targetTemp += config.hysteresis
 		else:
-			targetTemp = programTemp - config.hysteresis
+			targetTemp -= config.hysteresis
 		
 		# Do Control
 		
