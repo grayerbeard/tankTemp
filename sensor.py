@@ -37,6 +37,21 @@ from time import sleep as time_sleep
 class class_my_sensors:
 	def __init__(self,config):
 		self.sensor4readings = config.sensor4readings
+		self.lastTemp = round(config.normal_temp) + 0.4321
+		self.errorCount = 0
+		self.the_sensor = W1ThermSensor(sensor_type=Sensor.DS18B20, sensor_id=self.sensor4readings)
+		
+	def getTheTemp(self):
+		try:
+			temp,tries = self.the_sensor.get_temperature()
+			getTheTempError = False
+			self.lastTemp = temp
+		except:
+			temp = round(self.lastTemp) + 0.1111
+			print("error in sensor.py line 46")
+			getTheTempError = True
+			tries = 0
+		return temp,tries,getTheTempError
 
 	def get_temp(self):
 		# gets the temperature of the sensor for readings	
@@ -45,12 +60,20 @@ class class_my_sensors:
 		for sensor in W1ThermSensor.get_available_sensors([Sensor.DS18B20]):
 			sensor.id, sensor.get_temperature()
 			if self.sensor4readings == sensor.id:
-				temp = sensor.get_temperature()
 				found = True
+				try:
+					temp,tries = sensor.get_temperature()
+					self.lastTemp = temp
+					self.errorCount = 0
+				except:
+					print("Error in Reading temperature sensor.py line.49, error count : ",self.errorCount)
+					temp = round(self.lastTemp,0) + 0.1234
+					self.errorCount += 1
 			else:
 				print("Found other sensor code : ",sensor.id, "  please correct entry in config.cfg")
-		if found:
-			return temp
+		#print("W1ThermSensor.tries : ",tries)
+		if found  and (self.errorCount < 3):
+			return temp,tries
 		else:
 			return -100
 

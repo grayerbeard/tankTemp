@@ -57,7 +57,8 @@ onTime = 0
 offTime = 0
 
 logType = "log"
-headings = ["Hour in Day"," Tank Temp","Per 10 Mins","Predicted Temp","Target Temp","Boiler Status","Pump Status","offTime","onTime","Message"]
+headings = ["Hour in Day"," Tank Temp","Per 10 Mins","Predicted Temp","Target Temp","Boiler Status",\
+	"Pump Status","offTime","onTime","Tries","Max Trie","Error Count","Get Temp Error Count","Reason","Message"]
 logBuffer = class_text_buffer(headings,config,logType,logTime)
 
 relay = class_relay()
@@ -74,7 +75,7 @@ if config.scan_delay > 9:
 	refresh_time = config.scan_delay
 else:
 	refresh_time = 2*config.scan_delay
-message = "No Message"
+
 print("at Start up Turn Boiler Off")
 boilerOn = relay.relayOFF(config.boilerRelayNumber)
 pumpOn = relay.relayOFF(config.pumpRelayNumber)
@@ -87,11 +88,19 @@ targetTemp = 0
 programTemp = 0
 increment = True
 changeRate = 0
-lastTemp = sensor.get_temp()
+lastTemp,tries,getTheTempError = sensor.getTheTemp()
 lastLogTime = logTime
 predictedTemp = 0
 overRun = False
 overRunLogCount = 0
+
+tempMeasureErrorCount = 0
+maxTries = 0
+triesCount = 0
+getTheTempErrorCount = 0
+
+message = ""
+reason = ""
 
 
 while (config.scan_count <= config.max_scans) or (config.max_scans == 0):
@@ -117,7 +126,10 @@ while (config.scan_count <= config.max_scans) or (config.max_scans == 0):
 			#pumpOverRunTime = 0
 			pumpOn = relay.relayOFF(config.pumpRelayNumber)	
 			overRun = False
+			
 			increment = True
+			reason = reason + "OverRunStart,"
+			
 			message = "End of Pump Overrun, "
 			overRunLogCount = 0
 		elif pumpOn and overRun:
@@ -128,8 +140,11 @@ while (config.scan_count <= config.max_scans) or (config.max_scans == 0):
 		# Trigger Logs more often during OverRun
 		if pumpOn and overRun:
 			overRunLogCount += 1
-		if overRunLogCount > 2 :
+		if overRunLogCount > 1 :
+			
 			increment = True
+			reason = reason +  "Monitor OverRun,"
+
 			overRunLogCount = 0
 
 		#print("Hour in Time",hourInDay,config.day_start)
@@ -143,16 +158,20 @@ while (config.scan_count <= config.max_scans) or (config.max_scans == 0):
 		boostTime = (dayInWeek == config.boost_day) and \
 			( config.day_start < hourInDay < (config.day_start + config.boost_hours))
 			
-		print("dayInWeek : ",dayInWeek,"  hourInDay : ",hourInDay, \
-				"  dayTime : ",dayTime, "  boostTime : ",boostTime)
+		#print("dayInWeek : ",dayInWeek,"  hourInDay : ",round(hourInDay,2), \
+		#		"  dayTime : ",dayTime, "  boostTime : ",boostTime)
 		
 		# Work out Target Temperature
+		
 		if boostTime:
 			if programTemp == config.boost_temp:
 				message = message + "On Boost, "
 			else:
 				message = message + "Change to Boost, "
+				
 				increment = True
+				reason = reason + "BoostOn,"
+
 				print("Change to Boost")
 			programTemp = config.boost_temp
 		elif dayTime:
@@ -167,7 +186,10 @@ while (config.scan_count <= config.max_scans) or (config.max_scans == 0):
 				message = message + "  On Night Temp, "
 			else:
 				message = message + "Change to Night, "
+				
 				increment = True
+				reason = reason + "Change to Night"
+
 				#print("Change to Night")
 			programTemp = config.night_temp
 
@@ -179,15 +201,39 @@ while (config.scan_count <= config.max_scans) or (config.max_scans == 0):
 		
 		# Do Control
 		
-		temp = sensor.get_temp()
+		#temp,tries = sensor.get_temp()
+		try:
+			temp,tries,getTheTempError = sensor.getTheTemp()
+			if tries > maxTries:
+				maxTries = tries
+			if sensor.errorCount > 0 :
+				tempMeasureErrorCount += 1
+			if getTheTempError:
+				getTheTempErrorCount += 1
+			lastTempReading = temp
+		except:
+			temp = round(lastTempReading,0) + 0.1234
+			
+			increment = True
+			reason = reason + "TempReadError,"
+
 		if temp < 0 : # No Senso Connected
 			print("no Senso connected will turn Boiler Off")
 			boilerOn = relay.relayOFF(config.boilerRelayNumber)
 			pumpOn = relay.relayOFF(config.pumpRelayNumber)
+			sys_exit()
 		else:
 			tempChange = temp - lastTemp
 			changeRate = changeRate + (0.1 * (tempChange - changeRate))
-			predictedTemp = temp + 20 * changeRate
+			if changeRate < -0.15:
+				changeRate = changeRate * 0.95
+				message = message + " RR,"
+				print("changeRate reduced : ",changeRate)
+				
+				increment = True
+				reason = reason + "ChangeRateReduced"
+				
+			predictedTemp = temp + 10 * changeRate
 			lastTemp = temp
 			
 			if predictedTemp >= targetTemp:
@@ -199,7 +245,10 @@ while (config.scan_count <= config.max_scans) or (config.max_scans == 0):
 					overRun = True
 					offTime = (boilerTurnOffTime - boilerTurnOnTime).total_seconds() / 60.0
 					pumpOverRunTime = (logTime - overRunStartTime).total_seconds() / 60.0
+
 					increment = True
+					reason = reason + "Boiler Off,"
+
 					message = message + " Boiler Turned OFF  Pump ON Overrun StartP"
 				boilerOn = relay.relayOFF(config.boilerRelayNumber)
 			else:
@@ -208,7 +257,10 @@ while (config.scan_count <= config.max_scans) or (config.max_scans == 0):
 					boilerTurnOnTime = logTime
 					pumpOverRunStartTime = logTime
 					onTime = (boilerTurnOnTime - boilerTurnOffTime).total_seconds() / 60.0
+					
 					increment = True
+					reason = reason + "BoilerON"
+					
 					message = message + "Boiler Turned and Pump ON"
 				boilerOn = relay.relayON(config.boilerRelayNumber)
 				pumpOn = relay.relayON(config.pumpRelayNumber)
@@ -220,6 +272,7 @@ while (config.scan_count <= config.max_scans) or (config.max_scans == 0):
 		logBuffer.line_values["Per 10 Mins"] = round(changeRate*10*60/config.scan_delay,2)
 		logBuffer.line_values["Predicted Temp"] = round(predictedTemp,2)
 		logBuffer.line_values["Target Temp"]  = targetTemp
+		
 		if boilerOn:
 			logBuffer.line_values["Boiler Status"]  = "ON"
 		else:
@@ -232,20 +285,38 @@ while (config.scan_count <= config.max_scans) or (config.max_scans == 0):
 			logBuffer.line_values["Pump Status"] = "OFF"
 		logBuffer.line_values["onTime"]  = round(onTime,2)
 		logBuffer.line_values["offTime"]  = round(offTime,2)
-		logBuffer.line_values["Message"]  = message
+		logBuffer.line_values["Tries"]  = tries
+		logBuffer.line_values["Max Tries"]  = maxTries
+		logBuffer.line_values["Error Count"]  = tempMeasureErrorCount
+		logBuffer.line_values["Get Temp Error Count"] = getTheTempErrorCount
 
 		#Ensure logs at least every config.mustLog minutes 
 		timeSinceLog = (logTime - lastLogTime).total_seconds() / 60.0
+
 		if timeSinceLog > config.mustLog - (config.scan_delay/120):
-			increment = True
-
-
-		if config.scan_count < 5:
-			increment = True
-		logBuffer.pr(increment,0,logTime,refresh_time)
-		if increment:
 			lastLogTime = logTime
+			
+			increment = True
+			reason = reason + "aMustLog,"
+			
+		if (config.scan_count < 5) or (tries > 0) or (sensor.errorCount > 0) or getTheTempError:
+			
+			increment = True
+			if (config.scan_count < 5):
+				reason = reason + "start,"
+			if (tries > 0):
+				reason = reason + "tries,"
+			if (sensor.errorCount > 0):
+				reason = reason + "errors,"
+			if getTheTempError:
+				reason = reason + "temperror,"
+
+		logBuffer.line_values["Reason"]  = reason
+		logBuffer.line_values["Message"]  = message
+
+		logBuffer.pr(increment,0,logTime,refresh_time)
 		increment = False
+		reason = ""
 		message = ""
 
 		# Loop Managemnt
