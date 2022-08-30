@@ -39,8 +39,11 @@ class class_my_sensors:
 		self.sensor4readings = config.sensor4readings
 		self.lastTemp = round(config.normal_temp) + 0.4321
 		self.errorCount = 0
-		self.the_sensor = W1ThermSensor(sensor_type=Sensor.DS18B20, sensor_id=self.sensor4readings)
-		
+		try:
+			self.the_sensor = W1ThermSensor(sensor_type=Sensor.DS18B20, sensor_id=self.sensor4readings)
+		except:
+			print("Failed in sensor init id: ", self.sensor4readings)
+			
 	def getTheTemp(self):
 		try:
 			temp,tries = self.the_sensor.get_temperature()
