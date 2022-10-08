@@ -60,19 +60,19 @@ print ("6",config.program6)
 program = [[0] for i in range(7)]
 
 for item in config.program0:
-	program[0].append(int(item))
+	program[0].append(float(item))
 for item in config.program1:
-	program[1].append(int(item))
+	program[1].append(float(item))
 for item in config.program2:
-	program[2].append(int(item))
+	program[2].append(float(item))
 for item in config.program3:
-	program[3].append(int(item))
+	program[3].append(float(item))
 for item in config.program4:
-	program[4].append(int(item))
+	program[4].append(float(item))
 for item in config.program5:
-	program[5].append(int(item))
+	program[5].append(float(item))
 for item in config.program6:
-	program[6].append(int(item))	
+	program[6].append(float(item))	
 print (program)
 		
 	
