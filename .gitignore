@@ -130,5 +130,7 @@ dmypy.json
 
 # myadditions
 log/
-.html
-.json
+*.csv
+*.html
+*.json
+config.cfg

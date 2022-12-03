@@ -109,7 +109,9 @@ boilerOn = relay.relayOFF(config.boilerRelayNumber)
 pumpOn = relay.relayOFF(config.pumpRelayNumber)
 print("At start pump status :  ",pumpOn)
 
-startHold = True
+###########################################
+startHold = False
+#######################################
 lastHoldMin = logTime.minute 
 lastHoldSec = 0
 targetTemp = 0
