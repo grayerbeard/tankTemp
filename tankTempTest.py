@@ -77,16 +77,11 @@ print (program)
 		
 	
 config.scan_count = 0
-logTime= datetime.now()
-boilerTurnOffTime = logTime
-boilerTurnOnTime = logTime
-overRunStartTime = logTime
-onTime = 0
-offTime = 0
 
+logTime = datetime.now()
 logType = "log"
-headings = ["Hour in Day"," Tank Temp","Per 10 Mins","Predicted Temp","Target Temp","Boiler Status",\
-	"Pump Status","offTime","onTime","Tries","Max Trie","Error Count","Get Temp Error Count","Reason","Message"]
+headings = ["Hour in Day"," Tank Temp","Per 10 Mins","Predicted Temp","Target Temp","State",\
+	"NewState","StateTime","Tries","Max Trie","Error Count","Get Temp Error Count","Reason","Message"]
 logBuffer = class_text_buffer(headings,config,logType,logTime)
 
 relay = class_relay()
@@ -97,23 +92,13 @@ the_end_time = datetime.now()
 loop_time = 0
 correction = 7.5
 # Ensure start right by inc buffer
-last_fan_state = True
+#last_fan_state = True
 buffer_increment_flag = False
 if config.scan_delay > 9:
 	refresh_time = config.scan_delay
 else:
 	refresh_time = 2*config.scan_delay
 
-print("at Start up Turn Boiler Off")
-boilerOn = relay.relayOFF(config.boilerRelayNumber)
-pumpOn = relay.relayOFF(config.pumpRelayNumber)
-print("At start pump status :  ",pumpOn)
-
-###########################################
-startHold = False
-#######################################
-lastHoldMin = logTime.minute 
-lastHoldSec = 0
 targetTemp = 0
 programTemp = 0
 increment = True
@@ -122,7 +107,8 @@ lastTemp,tries,getTheTempError = sensor.getTheTemp()
 lastLogTime = logTime
 predictedTemp = 0
 overRun = False
-overRunLogCount = 0
+#restartFlag = False
+#overRunLogCount = 0
 
 tempMeasureErrorCount = 0
 maxTries = 0
@@ -132,28 +118,69 @@ getTheTempErrorCount = 0
 message = ""
 reason = ""
 
+allOff = 0
+allOn = 1
+overRun = 2
+
+state = allOff
+newState = allOff
+boilerOn = False
+pumpOn = False
+stateStart = logTime
+
 
 while (config.scan_count <= config.max_scans) or (config.max_scans == 0):
+
+		#			States					Names		Value
+		#  (1)	AllOff					AllOff				0
+		#  (2)	Boiler and Pump on		AllOn				1
+		#  (3)	OverRun					OverRun				2
+
+		#Actions Required:
+		# Continue in (1)	(all off)
+		#					Calculate Time since Boiler went Off
+		#					turn off both Relays
+		#					if temp < target
+		#							next state is AllOn
+		#							trigger log
+		# Continue in (2)	(all on)
+		#					Calculate Time since Boiler went on
+		#					turn on both relays
+		#					if temp > target
+		#						next state is Overrun
+		#						trigger log
+		# Continue in (3)	(overRun)
+		#					Calculate Time since Overrun Started
+		#					turn on pump, turn off boiler
+		#					if temp < Target
+		#						next ste is AllOn
+		#						trigger log
+		#					Elif overRun > time required
+		#						next state is AllOff
+		#						trigger log
+
+# Get information needed which is:
+#		time since state changes
+#		target temperature
+#		water temperature
+
+					#######################################
+					#   Get time and Target Temperature   #
+					#######################################
 	try:
-		while startHold:
-		#while False:
-			logTime = datetime.now()
-			holdMin = logTime.minute
-			holdSec = logTime.second
-			if holdMin != lastHoldMin:
-				startHold = False
-				break
-			if holdSec > (lastHoldSec + 5):
-				print("Waiting for next Minute : ",(60 - holdSec))
-				lastHoldSec = holdSec
-		# Sort out Time in Day and Day in week etc
-		logTime= datetime.now()
+		if state != newState:
+			stateStart = logTime
+			state = newState
+		stateTime = round((logTime - stateStart).total_seconds() / 60,2)
+		
 		dayInWeek = logTime.weekday()
 		hourInDay = logTime.hour + (logTime.minute/60)
-		dayTime = config.day_start <= hourInDay <= config.night_start
-		pumpOverRunTime = (logTime - overRunStartTime).total_seconds() / 60.0
-		
-
+		#dayTime = config.day_start <= hourInDay <= config.night_start
+		#if boilerOn and pumpOn:
+		#	pumpOverRunTime = config.pumpOverRunMinutes + 1
+		#elif pumpOn:
+		#	pumpOverRunTime = (logTime - overRunStartTime).total_seconds() / 60.0
+	
 		numValues = len(program[dayInWeek])
 		ind = 0
 		while ind<(numValues):
@@ -165,43 +192,19 @@ while (config.scan_count <= config.max_scans) or (config.max_scans == 0):
 			progTemp = program[dayInWeek][ind + 1]
 			if progHour < hourInDay < nextProgHour:
 				targetTemp = progTemp
-				#print("targetTemp is: ",targetTemp,"from : ",progHour," to : ",nextProgHour)
 			ind +=2
-		message = "day: " + str(dayInWeek) + " hour: " + str(round(hourInDay,2)) + " TargTemp: " + str(targetTemp)
-
-		if (pumpOverRunTime > config.pumpOverRunMinutes) and overRun:
-			#pumpOverRunTime = 0
-			pumpOn = relay.relayOFF(config.pumpRelayNumber)	
-			overRun = False
 			
-			increment = True
-			reason = reason + "OverRunEnd,"
-			
-			message = message + " End of Overrun, "
-			overRunLogCount = 0
-		elif pumpOn and overRun:
-			message = message + " Pump on OverRun, "
-		else:
-			message = message
-		
-		# Trigger Logs more often during OverRun
-		if pumpOn and overRun:
-			overRunLogCount += 1
-		if overRunLogCount > 1 :
-			# Uncomment following to monitor Overrun
-			#increment = True
-			#reason = reason +  "Monitor OverRun,"
-
-			overRunLogCount = 0
-
-		if boilerOn:
+		if state == allOn:
 			targetTemp += config.hysteresis
 		else:
 			targetTemp -= config.hysteresis
-		
-		# Do Control
-		
-		#temp,tries = sensor.get_temp()
+			
+		message = "day: " + str(dayInWeek) + " hour: " + str(round(hourInDay,2)) + " TargTemp: " + str(targetTemp)
+	
+						#############################################
+						#  Get Water Temperature and Predicted temp #
+						#############################################
+	
 		try:
 			temp,tries,getTheTempError = sensor.getTheTemp()
 			if tries > maxTries:
@@ -213,10 +216,8 @@ while (config.scan_count <= config.max_scans) or (config.max_scans == 0):
 			lastTempReading = temp
 		except:
 			temp = round(lastTempReading,0) + 0.1234
-			
 			increment = True
 			reason = reason + "TempReadError,"
-
 		if temp < 0 : # No Senso Connected
 			print("no Senso connected will turn Boiler Off")
 			boilerOn = relay.relayOFF(config.boilerRelayNumber)
@@ -225,66 +226,93 @@ while (config.scan_count <= config.max_scans) or (config.max_scans == 0):
 		else:
 			tempChange = temp - lastTemp
 			changeRate = changeRate + (0.1 * (tempChange - changeRate))
-			#if changeRate < -0.15:
-			#	changeRate = changeRate * 0.95
-			#	message = message + " RR,"
-			#	print("changeRate reduced : ",changeRate)
-			#	
-			#	increment = True
-			#	reason = reason + "ChangeRateReduced"
-				
 			predictedTemp = temp + 10 * changeRate
 			lastTemp = temp
-			
-			if predictedTemp >= targetTemp:
-				if boilerOn : # This is a change from ON to OFF
-					#print("Temp NOW > Target so turn boiler off")
-					boilerTurnOffTime = logTime
-					overRunStartTime = logTime
-					pumpOn = relay.relayON(config.pumpRelayNumber)
-					overRun = True
-					offTime = (boilerTurnOffTime - boilerTurnOnTime).total_seconds() / 60.0
-					pumpOverRunTime = (logTime - overRunStartTime).total_seconds() / 60.0
-
-					increment = True
-					reason = reason + "Boiler Off,"
-
-					message = message + " Boiler Turned OFF  Pump ON Overrun StartP"
-				boilerOn = relay.relayOFF(config.boilerRelayNumber)
-			else:
-				if not boilerOn : # This is a change from OFF to ON
-					#print("Temp < Target so turn boiler ON")
-					boilerTurnOnTime = logTime
-					pumpOverRunStartTime = logTime
-					onTime = (boilerTurnOnTime - boilerTurnOffTime).total_seconds() / 60.0
-					
-					increment = True
-					reason = reason + "BoilerON"
-					
-					message = message + "Boiler Turned and Pump ON"
-				boilerOn = relay.relayON(config.boilerRelayNumber)
-				pumpOn = relay.relayON(config.pumpRelayNumber)
+	
+						#######################################
+						#  Do actions required based on State #
+						#######################################	
+	
+		if state == allOff:
+			#					(all off)
+			#					Calculate Time since Boiler went Off
+			#					turn off both Relays
+			#					if temp < target
+			#							next state is AllOn
+			#							trigger log
+			pumpOn = relay.relayOFF(config.pumpRelayNumber)
+			boilerOn = relay.relayOFF(config.boilerRelayNumber)
+			if predictedTemp <= targetTemp:
+				increment = True
+				newState = allOn
+				reason = reason + "Boiler On"
+				message = message + " Boiler and Pump on"
+	
+		if state == allOn:
+			#               	(all on)
+			#					Calculate Time since Boiler went on
+			#					turn on both relays
+			#					if temp > target
+			#						next state is Overrun
+			#						trigger log
+			pumpOn = relay.relayON(config.pumpRelayNumber)
+			boilerOn = relay.relayON(config.boilerRelayNumber)
+			if predictedTemp > targetTemp:
+				increment = True
+				newState = overRun
+				reason = reason + "Boiler Off Overrun On"
+				message = message + " Pump on OverRun"
+	
+		if state == overRun:
+			#					(overRun)
+			#					Calculate Time since Overrun Started
+			#					turn on pump, turn off boiler
+			#					if temp < Target
+			#						next ste is AllOn
+			#						trigger log
+			#					Elif overRun > time required
+			#						next state is AllOff
+			#						trigger log
+			pumpOn = relay.relayON(config.pumpRelayNumber)
+			boilerOn = relay.relayOFF(config.boilerRelayNumber)
+			if predictedTemp <= targetTemp:
+				increment = True
+				newState = allOn
+				reason = reason + "Temp Drop During OverRun"
+				message = message + " Boiler Back On"
+			elif stateTime > config.pumpOverRunMinutes:
+				increment = True
+				newState = allOff
+				reason = reason + "End OverRun"
+				message = message + " "
 
 		# Do Logging
-		#" Tank Temp","Target Temp","Boiler Status","Message"]
 		logBuffer.line_values["Hour in Day"]  =  round(hourInDay,2)
 		logBuffer.line_values["TankTemp"]  = temp
 		logBuffer.line_values["Per 10 Mins"] = round(changeRate*10*60/config.scan_delay,2)
 		logBuffer.line_values["Predicted Temp"] = round(predictedTemp,2)
 		logBuffer.line_values["Target Temp"]  = targetTemp
-		
-		if boilerOn:
-			logBuffer.line_values["Boiler Status"]  = "ON"
+		if state == allOff:
+			logBuffer.line_values["State"]  = "Boiler Off"
+		elif state == allOn:
+			logBuffer.line_values["State"]  = "Boiler On"
+		elif state == overRun:
+			logBuffer.line_values["State"]  = "Pump OverRun"
 		else:
-			logBuffer.line_values["Boiler Status"]  = "OFF"
-		if pumpOn and overRun:
-			logBuffer.line_values["Pump Status"] = "ON Over Run for :" + str(round(pumpOverRunTime,2))
-		elif pumpOn:
-			logBuffer.line_values["Pump Status"] = "ON"
+			logBuffer.line_values["State"]  = "State Error "
+			increment = True
+			print("stare error",state, allOff, allOn, overRun)
+		if newState == allOff:
+			logBuffer.line_values["newState"]  = "Boiler Off"
+		elif newState == allOn:
+			logBuffer.line_values["newState"]  = "Boiler On"
+		elif newState == overRun:
+			logBuffer.line_values["newState"]  = "Pump OverRun"
 		else:
-			logBuffer.line_values["Pump Status"] = "OFF"
-		logBuffer.line_values["onTime"]  = round(onTime,2)
-		logBuffer.line_values["offTime"]  = round(offTime,2)
+			print("state error",newState, allOff, allOn, overRun)
+			logBuffer.line_values["newState"]  = "State Error"
+			increment = True
+		logBuffer.line_values["stateTime"] = str(round(stateTime,2))
 		logBuffer.line_values["Tries"]  = tries
 		logBuffer.line_values["Max Tries"]  = maxTries
 		logBuffer.line_values["Error Count"]  = tempMeasureErrorCount
@@ -377,5 +405,4 @@ while (config.scan_count <= config.max_scans) or (config.max_scans == 0):
 			pumpOn = relay.relayOFF(config.pumpRelayNumber)			
 			time_sleep(10)
 		sys_exit()
-
-	
+	logTime = datetime.now()

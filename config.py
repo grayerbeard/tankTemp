@@ -77,7 +77,7 @@ class class_config:
 		
 # End of items set in config.cfg	
 
-# Start of parameters are not saved to the config file
+# Start of parameters are not saved to the creport.append((onfig file
 		# Based on the program name work out names for other files
 		# First three use the program pathname	
 		self.prog_path = path.dirname(path.realpath(__file__)) + "/"

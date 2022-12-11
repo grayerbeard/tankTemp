@@ -49,9 +49,11 @@ class class_my_sensors:
 			temp,tries = self.the_sensor.get_temperature()
 			getTheTempError = False
 			self.lastTemp = temp
-		except:
+		except Exception as err:
+			print("Exception ssnsor line 53, Error is, ", err, "type is ",type(err))
+			#print(f"Unexpected {err=}, {type(err)=}")
 			temp = round(self.lastTemp) + 0.1111
-			print("error in sensor.py line 46")
+			print("error in sensor.py line 55, tries :",tries)
 			getTheTempError = True
 			tries = 0
 		return temp,tries,getTheTempError
