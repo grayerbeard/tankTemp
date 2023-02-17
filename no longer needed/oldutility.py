@@ -52,7 +52,7 @@ def in_GUI_mode():
 		#in gui mode ...
 		return(True)
 
-def listFiles(path,exclude):
+def list_files(path,exclude):
 	# List all files in path "path" bu exclude items matching "exclude"
 	# Result is returned as a list
 	here = "list_files"
@@ -81,13 +81,7 @@ def pr(flag,where,message,var_val):
 			print("debug: ", where , " : ", message, str(var_val))
 	return
 
-def prd(flag,name,value1="",value2="",value3="",value4="",value5=""):
-	# routine for debugging that prints message then a variables value
-	if flag:
-		print("Debug: ",name," ",value1," ",value2," ",value3," ",value4," ",value5)
-	return
-
-def fileExists(filename):
+def fileexists(filename):
 	#This checks for file but does not detect disconnected sensor
 	try:
 			with open(filename): pass
@@ -102,11 +96,11 @@ def show_html(html_filename):
 	url = "file://" + html_filename
 	webbrowser.open(url,new=2) # new=2 signals new tab
 	
-def makeTimeText(time_value):
+def make_time_text(time_value):
 	#make a time stamp in format mm:dd hr:mn:sc.xxx ie with millisecs
-	return time_value.strftime('%Y-%m-%d %H %M %S.%f')[:-3]
+	return time_value.strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
 
-def sendByFtp(dbug_send_ftp,ftp_cred,send_filename, save_as_filename, ftp_remote_dir,ftp_timeout):
+def send_by_ftp(dbug_send_ftp,ftp_cred,send_filename, save_as_filename, ftp_remote_dir,ftp_timeout):
 	here = "send_by_ftp"
 	result = ["FTP attempt for :" + send_filename]
 	
@@ -165,7 +159,3 @@ def sendByFtp(dbug_send_ftp,ftp_cred,send_filename, save_as_filename, ftp_remote
 		print("Error Trying To Send " + send_filename + " file by FTP", "Try setting dbug flag to investigate")
 	return(result)
 
-def makeBoolean(inputString):
-	print(type(inputString))
-	result = (True,True)
-	return

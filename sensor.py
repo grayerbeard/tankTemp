@@ -29,15 +29,17 @@
 # Third party imports
 from w1thermsensor import W1ThermSensor, Sensor
 # Local application imports
-from utility import fileexists
+from utility import fileExists
 from config import class_config
 from time import sleep as time_sleep
+from inspect import currentframe as cf
+from inspect import getframeinfo as gf
 
 
 class class_my_sensors:
 	def __init__(self,config):
 		self.sensor4readings = config.sensor4readings
-		self.lastTemp = round(config.normal_temp) + 0.4321
+		self.lastTemp = round(config.maxTempDay0) + 0.4321
 		self.errorCount = 0
 		try:
 			self.the_sensor = W1ThermSensor(sensor_type=Sensor.DS18B20, sensor_id=self.sensor4readings)
@@ -45,18 +47,21 @@ class class_my_sensors:
 			print("Failed in sensor init id: ", self.sensor4readings)
 			
 	def getTheTemp(self):
+		excRep = []
+		tries = 0
 		try:
+			finfo = gf(cf())
 			temp,tries = self.the_sensor.get_temperature()
 			getTheTempError = False
 			self.lastTemp = temp
 		except Exception as err:
-			print("Exception ssnsor line 53, Error is, ", err, "type is ",type(err))
-			#print(f"Unexpected {err=}, {type(err)=}")
+			exc = (finfo.filename,str(finfo.lineno),str(type(err))[8:-2],str(err))
+			excRep.append(exc)
+			print(exc)
 			temp = round(self.lastTemp) + 0.1111
-			print("error in sensor.py line 55, tries :",tries)
 			getTheTempError = True
 			tries = 0
-		return temp,tries,getTheTempError
+		return temp,tries,excRep
 
 	def get_temp(self):
 		# gets the temperature of the sensor for readings	

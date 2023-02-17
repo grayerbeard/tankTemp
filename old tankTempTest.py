@@ -33,20 +33,20 @@ from subprocess import call
 # None
 # Local application imports
 from config import class_config
-from textBuffer import class_text_buffer
+from text_buffer import class_text_buffer
 from relay import class_relay
-from utility import fileExists,pr,makeTimeText
+from utility import fileexists,pr,make_time_text
 # Note use of sensor_test possible on next line
 from sensor import class_my_sensors
 
 #Set up Config file and read it in if present
-config = class_config("config.cfg")
-#if fileexists(config.config_filename):		
-#	print( "will try to read Config File : " ,config.config_filename)
-#	config.read_file() # overwrites from file
-#else : # no file so file needs to be writen
-#	config.write_file()
-#	print("New Config File Made with default values, you probably need to edit it")
+config = class_config()
+if fileexists(config.config_filename):		
+	print( "will try to read Config File : " ,config.config_filename)
+	config.read_file() # overwrites from file
+else : # no file so file needs to be writen
+	config.write_file()
+	print("New Config File Made with default values, you probably need to edit it")
 	
 print ("0",config.program0)
 print ("1",config.program1)
@@ -72,13 +72,17 @@ for item in config.program4:
 for item in config.program5:
 	program[5].append(float(item))
 for item in config.program6:
-	program[6].append(float(item))
-config.maxTempDay0 = max(program[0])
+	program[6].append(float(item))	
+print (program)
+		
+	
 config.scan_count = 0
 
 logTime = datetime.now()
 logType = "log"
-logBuffer = class_text_buffer(config,logTime)
+headings = ["Hour in Day"," Tank Temp","Per 10 Mins","Predicted Temp","Target Temp","State",\
+	"NewState","StateTime","Tries","Max Trie","Error Count","Get Temp Error Count","Reason","Message"]
+logBuffer = class_text_buffer(headings,config,logType,logTime)
 
 relay = class_relay()
 sensor = class_my_sensors(config)
@@ -89,15 +93,15 @@ loop_time = 0
 correction = 7.5
 # Ensure start right by inc buffer
 #last_fan_state = True
-saveThis = False
-#if config.scanDelay > 9:
-#	refresh_time = config.scanDelay
-#else:
-#	refresh_time = 2*config.scanDelay
+buffer_increment_flag = False
+if config.scan_delay > 9:
+	refresh_time = config.scan_delay
+else:
+	refresh_time = 2*config.scan_delay
 
 targetTemp = 0
 programTemp = 0
-saveThis = True
+increment = True
 changeRate = 0
 lastTemp,tries,getTheTempError = sensor.getTheTemp()
 lastLogTime = logTime
@@ -125,7 +129,7 @@ pumpOn = False
 stateStart = logTime
 
 
-while (config.scan_count <= config.maxScans) or (config.maxScans == 0):
+while (config.scan_count <= config.max_scans) or (config.max_scans == 0):
 
 		#			States					Names		Value
 		#  (1)	AllOff					AllOff				0
@@ -212,7 +216,7 @@ while (config.scan_count <= config.maxScans) or (config.maxScans == 0):
 			lastTempReading = temp
 		except:
 			temp = round(lastTempReading,0) + 0.1234
-			saveThis = True
+			increment = True
 			reason = reason + str(excRep)
 		if temp < 0 : # No Senso Connected
 			print("no Senso connected will turn Boiler Off")
@@ -239,7 +243,7 @@ while (config.scan_count <= config.maxScans) or (config.maxScans == 0):
 			pumpOn = relay.relayOFF(config.pumpRelayNumber)
 			boilerOn = relay.relayOFF(config.boilerRelayNumber)
 			if predictedTemp <= targetTemp:
-				saveThis = True
+				increment = True
 				newState = allOn
 				reason = reason + "Boiler On"
 				message = message + " Boiler and Pump on"
@@ -254,7 +258,7 @@ while (config.scan_count <= config.maxScans) or (config.maxScans == 0):
 			pumpOn = relay.relayON(config.pumpRelayNumber)
 			boilerOn = relay.relayON(config.boilerRelayNumber)
 			if predictedTemp > targetTemp:
-				saveThis = True
+				increment = True
 				newState = overRun
 				reason = reason + "Boiler Off Overrun On"
 				message = message + " Pump on OverRun"
@@ -272,61 +276,60 @@ while (config.scan_count <= config.maxScans) or (config.maxScans == 0):
 			pumpOn = relay.relayON(config.pumpRelayNumber)
 			boilerOn = relay.relayOFF(config.boilerRelayNumber)
 			if predictedTemp <= targetTemp:
-				saveThis = True
+				increment = True
 				newState = allOn
 				reason = reason + "Temp Drop During OverRun"
 				message = message + " Boiler Back On"
 			elif stateTime > config.pumpOverRunMinutes:
-				saveThis = True
+				increment = True
 				newState = allOff
 				reason = reason + "End OverRun"
 				message = message + " "
 
 		# Do Logging
-		logBuffer.lineValues["Time"] =makeTimeText(logTime)
-		logBuffer.lineValues["Hour in Day"]  =  round(hourInDay,2)
-		logBuffer.lineValues["Tank Temp"]  = temp
-		logBuffer.lineValues["Per 10 Mins"] = round(changeRate*10*60/config.scanDelay,2)
-		logBuffer.lineValues["Predicted Temp"] = round(predictedTemp,2)
-		logBuffer.lineValues["Target Temp"]  = targetTemp
+		logBuffer.line_values["Hour in Day"]  =  round(hourInDay,2)
+		logBuffer.line_values["TankTemp"]  = temp
+		logBuffer.line_values["Per 10 Mins"] = round(changeRate*10*60/config.scan_delay,2)
+		logBuffer.line_values["Predicted Temp"] = round(predictedTemp,2)
+		logBuffer.line_values["Target Temp"]  = targetTemp
 		if state == allOff:
-			logBuffer.lineValues["State"]  = "Boiler Off"
+			logBuffer.line_values["State"]  = "Boiler Off"
 		elif state == allOn:
-			logBuffer.lineValues["State"]  = "Boiler On"
+			logBuffer.line_values["State"]  = "Boiler On"
 		elif state == overRun:
-			logBuffer.lineValues["State"]  = "Pump OverRun"
+			logBuffer.line_values["State"]  = "Pump OverRun"
 		else:
-			logBuffer.lineValues["State"]  = "State Error "
-			saveThis = True
+			logBuffer.line_values["State"]  = "State Error "
+			increment = True
 			print("stare error",state, allOff, allOn, overRun)
 		if newState == allOff:
-			logBuffer.lineValues["NewState"]  = "Boiler Off"
+			logBuffer.line_values["newState"]  = "Boiler Off"
 		elif newState == allOn:
-			logBuffer.lineValues["NewState"]  = "Boiler On"
+			logBuffer.line_values["newState"]  = "Boiler On"
 		elif newState == overRun:
-			logBuffer.lineValues["NewState"]  = "Pump OverRun"
+			logBuffer.line_values["newState"]  = "Pump OverRun"
 		else:
 			print("state error",newState, allOff, allOn, overRun)
-			logBuffer.lineValues["NewState"]  = "State Error"
-			saveThis = True
-		logBuffer.lineValues["StateTime"] = str(round(stateTime,2))
-		logBuffer.lineValues["Tries"]  = tries
-		logBuffer.lineValues["Max Tries"]  = maxTries
-		logBuffer.lineValues["Error Count"]  = tempMeasureErrorCount
-		logBuffer.lineValues["Get Temp Error Count"] = getTheTempErrorCount
+			logBuffer.line_values["newState"]  = "State Error"
+			increment = True
+		logBuffer.line_values["stateTime"] = str(round(stateTime,2))
+		logBuffer.line_values["Tries"]  = tries
+		logBuffer.line_values["Max Tries"]  = maxTries
+		logBuffer.line_values["Error Count"]  = tempMeasureErrorCount
+		logBuffer.line_values["Get Temp Error Count"] = getTheTempErrorCount
 
 		#Ensure logs at least every config.mustLog minutes 
 		timeSinceLog = (logTime - lastLogTime).total_seconds() / 60.0
 
-		if timeSinceLog > config.mustLog - (config.scanDelay/120):
+		if timeSinceLog > config.mustLog - (config.scan_delay/120):
 			lastLogTime = logTime
 			
-			saveThis = True
+			increment = True
 			reason = reason + "aMustLog,"
 			
 		if (config.scan_count < 5) or (tries > 0) or (sensor.errorCount > 0) or getTheTempError:
 			
-			saveThis = True
+			increment = True
 			if (config.scan_count < 5):
 				reason = reason + "start,"
 			if (tries > 0):
@@ -336,11 +339,11 @@ while (config.scan_count <= config.maxScans) or (config.maxScans == 0):
 			if getTheTempError:
 				reason = reason + "temperror,"
 
-		logBuffer.lineValues["Reason"]  = reason
-		logBuffer.lineValues["Message"]  = message
+		logBuffer.line_values["Reason"]  = reason
+		logBuffer.line_values["Message"]  = message
 
-		logBuffer.pr(saveThis,logTime)
-		saveThis = False
+		logBuffer.pr(increment,0,logTime,refresh_time)
+		increment = False
 		reason = ""
 		message = ""
 
@@ -351,8 +354,8 @@ while (config.scan_count <= config.maxScans) or (config.maxScans == 0):
 		
 		# Adjust the sleep time to aceive the target loop time and apply
 		# with a slow acting correction added in to gradually improve accuracy
-		if loop_time < (config.scanDelay - (correction/1000)):
-			sleep_time = config.scanDelay - loop_time - (correction/1000)
+		if loop_time < (config.scan_delay - (correction/1000)):
+			sleep_time = config.scan_delay - loop_time - (correction/1000)
 			try:
 				time_sleep(sleep_time)
 			except KeyboardInterrupt:
@@ -372,19 +375,19 @@ while (config.scan_count <= config.maxScans) or (config.maxScans == 0):
 			except ValueError:
 				print("sleep_Time Error value is: ",sleep_time, "loop_time: ",
 				      loop_time,"correction/1000 : ",correction/1000)
-				print("Will do sleep using config.scanDelay and reset correction to 7.5msec")
+				print("Will do sleep using config.scan_delay and reset correction to 7.5msec")
 				correction = 7.5
-				time_sleep(config.scanDelay)
+				time_sleep(config.scan_delay)
 			except Exception:
-				print("some other error with time_sleep try with config.scanDelay")
-				time_sleep(config.scanDelay) 
+				print("some other error with time_sleep try with config.scan_delay")
+				time_sleep(config.scan_delay) 
 		else:
-			time_sleep(config.scanDelay)
+			time_sleep(config.scan_delay)
 		last_end = the_end_time
 		the_end_time = datetime.now()
 		last_total = (the_end_time - last_end).total_seconds()
-		error = 1000*(last_total - config.scanDelay)
-		if error > 250*(config.scanDelay):
+		error = 1000*(last_total - config.scan_delay)
+		if error > 250*(config.scan_delay):
 			print("Large Error ignored it was : ",error)
 		else:
 			correction = correction + (0.15*error)

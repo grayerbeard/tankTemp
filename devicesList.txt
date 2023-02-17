@@ -1,0 +1,1364 @@
+
+Device Name: 35 The Firs Living Room
+id :bfff5757e439ba2207lcww
+key : 7fc385b6d1919951
+mac : a0:92:08:df:fb:2b
+ Properties of device named : 35 The Firs Living Room
+{
+    "result": {
+        "category": "wsdcg",
+        "functions": [
+            {
+                "code": "temp_unit_convert",
+                "desc": "{\"range\":[\"c\",\"f\"]}",
+                "name": "\u6e29\u6807\u5207\u6362",
+                "type": "Enum",
+                "values": "{\"range\":[\"c\",\"f\"]}"
+            }
+        ],
+        "status": [
+            {
+                "code": "va_temperature",
+                "name": "\u5f53\u524d\u6e29\u5ea6",
+                "type": "Integer",
+                "values": "{\"unit\":\"\u2103\",\"min\":-200,\"max\":600,\"scale\":1,\"step\":1}"
+            },
+            {
+                "code": "va_humidity",
+                "name": "\u6e7f\u5ea6\u6570\u503c",
+                "type": "Integer",
+                "values": "{\"unit\":\"%\",\"min\":0,\"max\":100,\"scale\":0,\"step\":1}"
+            },
+            {
+                "code": "battery_state",
+                "name": "\u7535\u6c60\u7535\u91cf\u72b6\u6001",
+                "type": "Enum",
+                "values": "{\"range\":[\"low\",\"middle\",\"high\"]}"
+            },
+            {
+                "code": "temp_unit_convert",
+                "name": "\u6e29\u6807\u5207\u6362",
+                "type": "Enum",
+                "values": "{\"range\":[\"c\",\"f\"]}"
+            }
+        ]
+    },
+    "success": true,
+    "t": 1672940532368,
+    "tid": "490fc0868d2011ed9155f6a8c25a9394"
+}
+ Status of device named : 35 The Firs Living Room
+{
+    "result": [
+        {
+            "code": "va_temperature",
+            "value": 101
+        },
+        {
+            "code": "va_humidity",
+            "value": 78
+        },
+        {
+            "code": "battery_state",
+            "value": "high"
+        },
+        {
+            "code": "temp_unit_convert",
+            "value": "c"
+        }
+    ],
+    "success": true,
+    "t": 1672940532645,
+    "tid": "4946137c8d2011ed9155f6a8c25a9394"
+}
+
+Device Name: 35 The Firs Heating
+id :1242604384cca88a9de3
+key : eca8edeb0b042379
+mac : 84:cc:a8:8a:9d:e3
+ Properties of device named : 35 The Firs Heating
+{
+    "result": {
+        "category": "wk",
+        "functions": [
+            {
+                "code": "switch",
+                "desc": "{}",
+                "name": "\u5f00\u5173",
+                "type": "Boolean",
+                "values": "{}"
+            },
+            {
+                "code": "temp_set",
+                "desc": "{\"unit\":\"\u2103\",\"min\":5,\"max\":35,\"scale\":0,\"step\":1}",
+                "name": "\u6e29\u5ea6\u8bbe\u7f6e",
+                "type": "Integer",
+                "values": "{\"unit\":\"\u2103\",\"min\":5,\"max\":35,\"scale\":0,\"step\":1}"
+            },
+            {
+                "code": "mode",
+                "desc": "{\"range\":[\"comfortable\",\"auto\",\"holiday\",\"manual\",\"sleep\"]}",
+                "name": "\u5de5\u4f5c\u6a21\u5f0f",
+                "type": "Enum",
+                "values": "{\"range\":[\"comfortable\",\"auto\",\"holiday\",\"manual\",\"sleep\"]}"
+            },
+            {
+                "code": "child_lock",
+                "desc": "{}",
+                "name": "\u7ae5\u9501",
+                "type": "Boolean",
+                "values": "{}"
+            },
+            {
+                "code": "temp_correction",
+                "desc": "{\"min\":-9,\"max\":9,\"scale\":0,\"step\":1}",
+                "name": "\u6e29\u5ea6\u6821\u51c6",
+                "type": "Integer",
+                "values": "{\"min\":-9,\"max\":9,\"scale\":0,\"step\":1}"
+            }
+        ],
+        "status": [
+            {
+                "code": "temp_current",
+                "name": "\u5f53\u524d\u6e29\u5ea6",
+                "type": "Integer",
+                "values": "{\"unit\":\"\u2103\",\"min\":0,\"max\":50,\"scale\":0,\"step\":1}"
+            },
+            {
+                "code": "child_lock",
+                "name": "\u7ae5\u9501",
+                "type": "Boolean",
+                "values": "{}"
+            },
+            {
+                "code": "temp_set",
+                "name": "\u6e29\u5ea6\u8bbe\u7f6e",
+                "type": "Integer",
+                "values": "{\"unit\":\"\u2103\",\"min\":5,\"max\":35,\"scale\":0,\"step\":1}"
+            },
+            {
+                "code": "fault",
+                "name": "\u6545\u969c\u544a\u8b66",
+                "type": "Bitmap",
+                "values": "{\"label\":[\"1\",\"2\"]}"
+            },
+            {
+                "code": "switch",
+                "name": "\u5f00\u5173",
+                "type": "Boolean",
+                "values": "{}"
+            },
+            {
+                "code": "mode",
+                "name": "\u5de5\u4f5c\u6a21\u5f0f",
+                "type": "Enum",
+                "values": "{\"range\":[\"comfortable\",\"auto\",\"holiday\",\"manual\",\"sleep\"]}"
+            },
+            {
+                "code": "temp_correction",
+                "name": "\u6e29\u5ea6\u6821\u51c6",
+                "type": "Integer",
+                "values": "{\"min\":-9,\"max\":9,\"scale\":0,\"step\":1}"
+            }
+        ]
+    },
+    "success": true,
+    "t": 1672940532892,
+    "tid": "496b092d8d2011ed84f4f6d732894979"
+}
+ Status of device named : 35 The Firs Heating
+{
+    "result": [
+        {
+            "code": "switch",
+            "value": true
+        },
+        {
+            "code": "temp_set",
+            "value": 8
+        },
+        {
+            "code": "temp_current",
+            "value": 12
+        },
+        {
+            "code": "mode",
+            "value": "manual"
+        },
+        {
+            "code": "child_lock",
+            "value": true
+        },
+        {
+            "code": "fault",
+            "value": 0
+        },
+        {
+            "code": "temp_correction",
+            "value": 0
+        }
+    ],
+    "success": true,
+    "t": 1672940533116,
+    "tid": "498e93898d2011edbdcf768159807b40"
+}
+
+Device Name: Shed HP Out T&HSensor4
+id :bfb5cb7f904f3f5fdc2oym
+key : 5478e97172be8260
+mac : a0:92:08:df:cf:c3
+ Properties of device named : Shed HP Out T&HSensor4
+{
+    "result": {
+        "category": "wsdcg",
+        "functions": [
+            {
+                "code": "temp_unit_convert",
+                "desc": "{\"range\":[\"c\",\"f\"]}",
+                "name": "\u6e29\u6807\u5207\u6362",
+                "type": "Enum",
+                "values": "{\"range\":[\"c\",\"f\"]}"
+            }
+        ],
+        "status": [
+            {
+                "code": "va_temperature",
+                "name": "\u5f53\u524d\u6e29\u5ea6",
+                "type": "Integer",
+                "values": "{\"unit\":\"\u2103\",\"min\":-200,\"max\":600,\"scale\":1,\"step\":1}"
+            },
+            {
+                "code": "va_humidity",
+                "name": "\u6e7f\u5ea6\u6570\u503c",
+                "type": "Integer",
+                "values": "{\"unit\":\"%\",\"min\":0,\"max\":100,\"scale\":0,\"step\":1}"
+            },
+            {
+                "code": "battery_state",
+                "name": "\u7535\u6c60\u7535\u91cf\u72b6\u6001",
+                "type": "Enum",
+                "values": "{\"range\":[\"low\",\"middle\",\"high\"]}"
+            },
+            {
+                "code": "temp_unit_convert",
+                "name": "\u6e29\u6807\u5207\u6362",
+                "type": "Enum",
+                "values": "{\"range\":[\"c\",\"f\"]}"
+            }
+        ]
+    },
+    "success": true,
+    "t": 1672940533387,
+    "tid": "49b2cc288d2011edbdcf768159807b40"
+}
+ Status of device named : Shed HP Out T&HSensor4
+{
+    "result": [
+        {
+            "code": "va_temperature",
+            "value": 143
+        },
+        {
+            "code": "va_humidity",
+            "value": 56
+        },
+        {
+            "code": "battery_state",
+            "value": "high"
+        },
+        {
+            "code": "temp_unit_convert",
+            "value": "c"
+        }
+    ],
+    "success": true,
+    "t": 1672940533669,
+    "tid": "49e26af48d2011ed84f4f6d732894979"
+}
+
+Device Name: Shed HP in T&HSensor3
+id :bf55e654e900b1bd01zzjq
+key : 15b1be88cea85ec4
+mac : a0:92:08:df:ec:6d
+ Properties of device named : Shed HP in T&HSensor3
+{
+    "result": {
+        "category": "wsdcg",
+        "functions": [
+            {
+                "code": "temp_unit_convert",
+                "desc": "{\"range\":[\"c\",\"f\"]}",
+                "name": "\u6e29\u6807\u5207\u6362",
+                "type": "Enum",
+                "values": "{\"range\":[\"c\",\"f\"]}"
+            }
+        ],
+        "status": [
+            {
+                "code": "va_temperature",
+                "name": "\u5f53\u524d\u6e29\u5ea6",
+                "type": "Integer",
+                "values": "{\"unit\":\"\u2103\",\"min\":-200,\"max\":600,\"scale\":1,\"step\":1}"
+            },
+            {
+                "code": "va_humidity",
+                "name": "\u6e7f\u5ea6\u6570\u503c",
+                "type": "Integer",
+                "values": "{\"unit\":\"%\",\"min\":0,\"max\":100,\"scale\":0,\"step\":1}"
+            },
+            {
+                "code": "battery_state",
+                "name": "\u7535\u6c60\u7535\u91cf\u72b6\u6001",
+                "type": "Enum",
+                "values": "{\"range\":[\"low\",\"middle\",\"high\"]}"
+            },
+            {
+                "code": "temp_unit_convert",
+                "name": "\u6e29\u6807\u5207\u6362",
+                "type": "Enum",
+                "values": "{\"range\":[\"c\",\"f\"]}"
+            }
+        ]
+    },
+    "success": true,
+    "t": 1672940533923,
+    "tid": "4a0983268d2011ed9155f6a8c25a9394"
+}
+ Status of device named : Shed HP in T&HSensor3
+{
+    "result": [
+        {
+            "code": "va_temperature",
+            "value": 148
+        },
+        {
+            "code": "va_humidity",
+            "value": 67
+        },
+        {
+            "code": "battery_state",
+            "value": "middle"
+        },
+        {
+            "code": "temp_unit_convert",
+            "value": "c"
+        }
+    ],
+    "success": true,
+    "t": 1672940534126,
+    "tid": "4a2878e78d2011ed84f4f6d732894979"
+}
+
+Device Name: Shed Lower Work T&HSensor1
+id :bf6f1291cc4b30aa8d1wsv
+key : 262485665a6a7ffc
+mac : cc:8c:bf:4a:7c:0f
+ Properties of device named : Shed Lower Work T&HSensor1
+{
+    "result": {
+        "category": "wsdcg",
+        "functions": [
+            {
+                "code": "temp_unit_convert",
+                "desc": "{\"range\":[\"c\",\"f\"]}",
+                "name": "\u6e29\u6807\u5207\u6362",
+                "type": "Enum",
+                "values": "{\"range\":[\"c\",\"f\"]}"
+            }
+        ],
+        "status": [
+            {
+                "code": "va_temperature",
+                "name": "\u5f53\u524d\u6e29\u5ea6",
+                "type": "Integer",
+                "values": "{\"unit\":\"\u2103\",\"min\":-200,\"max\":600,\"scale\":1,\"step\":1}"
+            },
+            {
+                "code": "va_humidity",
+                "name": "\u6e7f\u5ea6\u6570\u503c",
+                "type": "Integer",
+                "values": "{\"unit\":\"%\",\"min\":0,\"max\":100,\"scale\":0,\"step\":1}"
+            },
+            {
+                "code": "battery_state",
+                "name": "\u7535\u6c60\u7535\u91cf\u72b6\u6001",
+                "type": "Enum",
+                "values": "{\"range\":[\"low\",\"middle\",\"high\"]}"
+            },
+            {
+                "code": "temp_unit_convert",
+                "name": "\u6e29\u6807\u5207\u6362",
+                "type": "Enum",
+                "values": "{\"range\":[\"c\",\"f\"]}"
+            }
+        ]
+    },
+    "success": true,
+    "t": 1672940534396,
+    "tid": "4a4bad7d8d2011edbdcf768159807b40"
+}
+ Status of device named : Shed Lower Work T&HSensor1
+{
+    "result": [
+        {
+            "code": "va_temperature",
+            "value": 144
+        },
+        {
+            "code": "va_humidity",
+            "value": 78
+        },
+        {
+            "code": "battery_state",
+            "value": "high"
+        },
+        {
+            "code": "temp_unit_convert",
+            "value": "c"
+        }
+    ],
+    "success": true,
+    "t": 1672940534683,
+    "tid": "4a7b8c758d2011ed9155f6a8c25a9394"
+}
+
+Device Name: Whitchurch Shed Main  Workshop
+id :01303121a4e57cb7ca0c
+key : cdc33fd2ab7e1e27
+mac : a4:e5:7c:b7:ca:0c
+ Properties of device named : Whitchurch Shed Main  Workshop
+{
+    "result": {
+        "category": "kt",
+        "functions": [
+            {
+                "code": "switch",
+                "desc": "{}",
+                "name": "\u5f00\u5173",
+                "type": "Boolean",
+                "values": "{}"
+            },
+            {
+                "code": "temp_set",
+                "desc": "{\"min\":16,\"unit\":\"\u2103\",\"scale\":0,\"max\":86,\"step\":1}",
+                "name": "\u8bbe\u7f6e\u6e29\u5ea6",
+                "type": "Integer",
+                "values": "{\"min\":16,\"unit\":\"\u2103\",\"scale\":0,\"max\":86,\"step\":1}"
+            },
+            {
+                "code": "windspeed",
+                "desc": "{\"range\":[\"1\",\"2\",\"3\"]}",
+                "name": "\u6863\u4f4d\u98ce\u901f",
+                "type": "Enum",
+                "values": "{\"range\":[\"1\",\"2\",\"3\"]}"
+            },
+            {
+                "code": "mode",
+                "desc": "{\"range\":[\"cold\",\"hot\",\"wet\",\"wind\"]}",
+                "name": "\u5de5\u4f5c\u6a21\u5f0f",
+                "type": "Enum",
+                "values": "{\"range\":[\"cold\",\"hot\",\"wet\",\"wind\"]}"
+            },
+            {
+                "code": "c_f",
+                "desc": "{\"range\":[\"C\",\"F\"]}",
+                "name": "\u6e29\u6807,\u534e\u6c0f\u5ea6\uff0c\u6444\u6c0f\u5ea6\u5207\u6362",
+                "type": "Enum",
+                "values": "{\"range\":[\"C\",\"F\"]}"
+            }
+        ],
+        "status": [
+            {
+                "code": "switch",
+                "name": "\u5f00\u5173",
+                "type": "Boolean",
+                "values": "{}"
+            },
+            {
+                "code": "temp_set",
+                "name": "\u8bbe\u7f6e\u6e29\u5ea6",
+                "type": "Integer",
+                "values": "{\"min\":16,\"unit\":\"\u2103\",\"scale\":0,\"max\":86,\"step\":1}"
+            },
+            {
+                "code": "temp_current",
+                "name": "\u5f53\u524d\u6e29\u5ea6",
+                "type": "Integer",
+                "values": "{\"min\":-9,\"scale\":0,\"unit\":\"\u2103\",\"max\":110,\"step\":1}"
+            },
+            {
+                "code": "windspeed",
+                "name": "\u6863\u4f4d\u98ce\u901f",
+                "type": "Enum",
+                "values": "{\"range\":[\"1\",\"2\",\"3\"]}"
+            },
+            {
+                "code": "mode",
+                "name": "\u5de5\u4f5c\u6a21\u5f0f",
+                "type": "Enum",
+                "values": "{\"range\":[\"cold\",\"hot\",\"wet\",\"wind\"]}"
+            },
+            {
+                "code": "c_f",
+                "name": "\u6e29\u6807,\u534e\u6c0f\u5ea6\uff0c\u6444\u6c0f\u5ea6\u5207\u6362",
+                "type": "Enum",
+                "values": "{\"range\":[\"C\",\"F\"]}"
+            }
+        ]
+    },
+    "success": true,
+    "t": 1672940535259,
+    "tid": "4ad53feb8d2011ed84f4f6d732894979"
+}
+ Status of device named : Whitchurch Shed Main  Workshop
+{
+    "result": [
+        {
+            "code": "switch",
+            "value": false
+        },
+        {
+            "code": "temp_set",
+            "value": 25
+        },
+        {
+            "code": "temp_current",
+            "value": 17
+        },
+        {
+            "code": "mode",
+            "value": "hot"
+        },
+        {
+            "code": "windspeed",
+            "value": "3"
+        },
+        {
+            "code": "c_f",
+            "value": "C"
+        }
+    ],
+    "success": true,
+    "t": 1672940535736,
+    "tid": "4b1d06218d2011edbdcf768159807b40"
+}
+
+Device Name: Shed Heating
+id :bf5723e4b65de4a64fteqz
+key : 4bb5f71d886a436c
+mac : cc:8c:bf:56:fa:b5
+ Properties of device named : Shed Heating
+{
+    "result": {
+        "category": "tdq",
+        "functions": [
+            {
+                "code": "switch_1",
+                "desc": "{}",
+                "name": "\u5f00\u51731",
+                "type": "Boolean",
+                "values": "{}"
+            },
+            {
+                "code": "countdown_1",
+                "desc": "{\"unit\":\"s\",\"min\":0,\"max\":86400,\"scale\":0,\"step\":1}",
+                "name": "\u5f00\u51731\u5012\u8ba1\u65f6",
+                "type": "Integer",
+                "values": "{\"unit\":\"s\",\"min\":0,\"max\":86400,\"scale\":0,\"step\":1}"
+            },
+            {
+                "code": "relay_status",
+                "desc": "{\"range\":[\"0\",\"1\",\"2\"]}",
+                "name": "\u4e0a\u7535\u72b6\u6001\u8bbe\u7f6e",
+                "type": "Enum",
+                "values": "{\"range\":[\"0\",\"1\",\"2\"]}"
+            },
+            {
+                "code": "random_time",
+                "desc": "{\"maxlen\":255}",
+                "name": "\u968f\u673a\u5b9a\u65f6",
+                "type": "String",
+                "values": "{\"maxlen\":255}"
+            },
+            {
+                "code": "cycle_time",
+                "desc": "{\"maxlen\":255}",
+                "name": "\u5faa\u73af\u5b9a\u65f6",
+                "type": "String",
+                "values": "{\"maxlen\":255}"
+            },
+            {
+                "code": "switch_inching",
+                "desc": "{\"maxlen\":255}",
+                "name": "\u70b9\u52a8\u5f00\u5173",
+                "type": "String",
+                "values": "{\"maxlen\":255}"
+            }
+        ],
+        "status": [
+            {
+                "code": "switch_1",
+                "name": "\u5f00\u51731",
+                "type": "Boolean",
+                "values": "{}"
+            },
+            {
+                "code": "countdown_1",
+                "name": "\u5f00\u51731\u5012\u8ba1\u65f6",
+                "type": "Integer",
+                "values": "{\"unit\":\"s\",\"min\":0,\"max\":86400,\"scale\":0,\"step\":1}"
+            },
+            {
+                "code": "relay_status",
+                "name": "\u4e0a\u7535\u72b6\u6001\u8bbe\u7f6e",
+                "type": "Enum",
+                "values": "{\"range\":[\"0\",\"1\",\"2\"]}"
+            },
+            {
+                "code": "random_time",
+                "name": "\u968f\u673a\u5b9a\u65f6",
+                "type": "String",
+                "values": "{\"maxlen\":255}"
+            },
+            {
+                "code": "cycle_time",
+                "name": "\u5faa\u73af\u5b9a\u65f6",
+                "type": "String",
+                "values": "{\"maxlen\":255}"
+            },
+            {
+                "code": "switch_inching",
+                "name": "\u70b9\u52a8\u5f00\u5173",
+                "type": "String",
+                "values": "{\"maxlen\":255}"
+            }
+        ]
+    },
+    "success": true,
+    "t": 1672940535996,
+    "tid": "4b42586b8d2011ed84f4f6d732894979"
+}
+ Status of device named : Shed Heating
+{
+    "result": [
+        {
+            "code": "switch_1",
+            "value": false
+        },
+        {
+            "code": "countdown_1",
+            "value": 0
+        },
+        {
+            "code": "relay_status",
+            "value": "0"
+        },
+        {
+            "code": "random_time",
+            "value": ""
+        },
+        {
+            "code": "cycle_time",
+            "value": ""
+        },
+        {
+            "code": "switch_inching",
+            "value": ""
+        }
+    ],
+    "success": true,
+    "t": 1672940536256,
+    "tid": "4b65d67c8d2011edbdcf768159807b40"
+}
+
+Device Name: 35Firs PowerSwitch
+id :bfae7fdb0b0c3c03522yoo
+key : 532cd28793076fa7
+mac : cc:8c:bf:57:27:c6
+ Properties of device named : 35Firs PowerSwitch
+{
+    "result": {
+        "category": "tdq",
+        "functions": [
+            {
+                "code": "switch_1",
+                "desc": "{}",
+                "name": "\u5f00\u51731",
+                "type": "Boolean",
+                "values": "{}"
+            },
+            {
+                "code": "countdown_1",
+                "desc": "{\"unit\":\"s\",\"min\":0,\"max\":86400,\"scale\":0,\"step\":1}",
+                "name": "\u5f00\u51731\u5012\u8ba1\u65f6",
+                "type": "Integer",
+                "values": "{\"unit\":\"s\",\"min\":0,\"max\":86400,\"scale\":0,\"step\":1}"
+            },
+            {
+                "code": "relay_status",
+                "desc": "{\"range\":[\"0\",\"1\",\"2\"]}",
+                "name": "\u4e0a\u7535\u72b6\u6001\u8bbe\u7f6e",
+                "type": "Enum",
+                "values": "{\"range\":[\"0\",\"1\",\"2\"]}"
+            },
+            {
+                "code": "random_time",
+                "desc": "{\"maxlen\":255}",
+                "name": "\u968f\u673a\u5b9a\u65f6",
+                "type": "String",
+                "values": "{\"maxlen\":255}"
+            },
+            {
+                "code": "cycle_time",
+                "desc": "{\"maxlen\":255}",
+                "name": "\u5faa\u73af\u5b9a\u65f6",
+                "type": "String",
+                "values": "{\"maxlen\":255}"
+            },
+            {
+                "code": "switch_inching",
+                "desc": "{\"maxlen\":255}",
+                "name": "\u70b9\u52a8\u5f00\u5173",
+                "type": "String",
+                "values": "{\"maxlen\":255}"
+            }
+        ],
+        "status": [
+            {
+                "code": "switch_1",
+                "name": "\u5f00\u51731",
+                "type": "Boolean",
+                "values": "{}"
+            },
+            {
+                "code": "countdown_1",
+                "name": "\u5f00\u51731\u5012\u8ba1\u65f6",
+                "type": "Integer",
+                "values": "{\"unit\":\"s\",\"min\":0,\"max\":86400,\"scale\":0,\"step\":1}"
+            },
+            {
+                "code": "relay_status",
+                "name": "\u4e0a\u7535\u72b6\u6001\u8bbe\u7f6e",
+                "type": "Enum",
+                "values": "{\"range\":[\"0\",\"1\",\"2\"]}"
+            },
+            {
+                "code": "random_time",
+                "name": "\u968f\u673a\u5b9a\u65f6",
+                "type": "String",
+                "values": "{\"maxlen\":255}"
+            },
+            {
+                "code": "cycle_time",
+                "name": "\u5faa\u73af\u5b9a\u65f6",
+                "type": "String",
+                "values": "{\"maxlen\":255}"
+            },
+            {
+                "code": "switch_inching",
+                "name": "\u70b9\u52a8\u5f00\u5173",
+                "type": "String",
+                "values": "{\"maxlen\":255}"
+            }
+        ]
+    },
+    "success": true,
+    "t": 1672940536663,
+    "tid": "4ba00f038d2011ed84f4f6d732894979"
+}
+ Status of device named : 35Firs PowerSwitch
+{
+    "result": [
+        {
+            "code": "switch_1",
+            "value": true
+        },
+        {
+            "code": "countdown_1",
+            "value": 0
+        },
+        {
+            "code": "relay_status",
+            "value": "0"
+        },
+        {
+            "code": "random_time",
+            "value": ""
+        },
+        {
+            "code": "cycle_time",
+            "value": ""
+        },
+        {
+            "code": "switch_inching",
+            "value": ""
+        }
+    ],
+    "success": true,
+    "t": 1672940536872,
+    "tid": "4bcb14288d2011ed9155f6a8c25a9394"
+}
+
+Device Name: Two-way temperature and humidity switch
+id :bfd590ed31af72dd013xvd
+key : 06fb3405b2daac0d
+mac : d8:1f:12:c6:c7:e5
+ Properties of device named : Two-way temperature and humidity switch
+{
+    "result": {
+        "category": "wkcz",
+        "functions": [
+            {
+                "code": "switch_all",
+                "desc": "{}",
+                "name": "\u603b\u5f00\u5173",
+                "type": "Boolean",
+                "values": "{}"
+            },
+            {
+                "code": "switch_1",
+                "desc": "{}",
+                "name": "\u5f00\u51731",
+                "type": "Boolean",
+                "values": "{}"
+            },
+            {
+                "code": "switch_2",
+                "desc": "{}",
+                "name": "\u5f00\u51732",
+                "type": "Boolean",
+                "values": "{}"
+            },
+            {
+                "code": "upper_temp",
+                "desc": "{\"unit\":\"\u2103\",\"min\":-500,\"max\":1100,\"scale\":1,\"step\":1}",
+                "name": "\u8bbe\u7f6e\u6e29\u5ea6\u4e0a\u9650",
+                "type": "Integer",
+                "values": "{\"unit\":\"\u2103\",\"min\":-500,\"max\":1100,\"scale\":1,\"step\":1}"
+            },
+            {
+                "code": "upper_temp_switch",
+                "desc": "{}",
+                "name": "\u9ad8\u6e29\u62a5\u8b66\u5f00\u5173",
+                "type": "Boolean",
+                "values": "{}"
+            },
+            {
+                "code": "upper_alarm_temp",
+                "desc": "{\"unit\":\"\u2103\",\"min\":-500,\"max\":1100,\"scale\":1,\"step\":1}",
+                "name": "\u9ad8\u6e29\u544a\u8b66\u6e29\u5ea6",
+                "type": "Integer",
+                "values": "{\"unit\":\"\u2103\",\"min\":-500,\"max\":1100,\"scale\":1,\"step\":1}"
+            },
+            {
+                "code": "lower_temp",
+                "desc": "{\"unit\":\"\u2103\",\"min\":-500,\"max\":1100,\"scale\":1,\"step\":1}",
+                "name": "\u8bbe\u7f6e\u6e29\u5ea6\u4e0b\u9650",
+                "type": "Integer",
+                "values": "{\"unit\":\"\u2103\",\"min\":-500,\"max\":1100,\"scale\":1,\"step\":1}"
+            },
+            {
+                "code": "lower_temp_switch",
+                "desc": "{}",
+                "name": "\u4f4e\u6e29\u62a5\u8b66\u5f00\u5173",
+                "type": "Boolean",
+                "values": "{}"
+            },
+            {
+                "code": "lower_alarm_temp",
+                "desc": "{\"unit\":\"\u2103\",\"min\":-500,\"max\":1100,\"scale\":1,\"step\":1}",
+                "name": "\u4f4e\u6e29\u544a\u8b66\u6e29\u5ea6",
+                "type": "Integer",
+                "values": "{\"unit\":\"\u2103\",\"min\":-500,\"max\":1100,\"scale\":1,\"step\":1}"
+            },
+            {
+                "code": "temp_correction",
+                "desc": "{\"min\":-90,\"max\":90,\"scale\":1,\"step\":1}",
+                "name": "\u6e29\u5ea6\u6821\u51c6",
+                "type": "Integer",
+                "values": "{\"min\":-90,\"max\":90,\"scale\":1,\"step\":1}"
+            },
+            {
+                "code": "maxhum_set",
+                "desc": "{\"unit\":\"%\",\"min\":0,\"max\":1000,\"scale\":1,\"step\":1}",
+                "name": "\u6e7f\u5ea6\u4e0a\u9650\u8bbe\u7f6e",
+                "type": "Integer",
+                "values": "{\"unit\":\"%\",\"min\":0,\"max\":1000,\"scale\":1,\"step\":1}"
+            },
+            {
+                "code": "minihum_set",
+                "desc": "{\"unit\":\"%\",\"min\":0,\"max\":1000,\"scale\":1,\"step\":1}",
+                "name": "\u6e7f\u5ea6\u4e0b\u9650\u8bbe\u7f6e",
+                "type": "Integer",
+                "values": "{\"unit\":\"%\",\"min\":0,\"max\":1000,\"scale\":1,\"step\":1}"
+            },
+            {
+                "code": "cycle_time",
+                "desc": "{}",
+                "name": "\u5206\u6bb5\u5b9a\u65f6",
+                "type": "String",
+                "values": "{}"
+            }
+        ],
+        "status": [
+            {
+                "code": "switch_all",
+                "name": "\u603b\u5f00\u5173",
+                "type": "Boolean",
+                "values": "{}"
+            },
+            {
+                "code": "switch_1",
+                "name": "\u5f00\u51731",
+                "type": "Boolean",
+                "values": "{}"
+            },
+            {
+                "code": "switch_2",
+                "name": "\u5f00\u51732",
+                "type": "Boolean",
+                "values": "{}"
+            },
+            {
+                "code": "temp_current",
+                "name": "\u5f53\u524d\u6e29\u5ea6\u2103",
+                "type": "Integer",
+                "values": "{\"unit\":\"\u2103\",\"min\":-500,\"max\":1100,\"scale\":1,\"step\":1}"
+            },
+            {
+                "code": "upper_temp",
+                "name": "\u8bbe\u7f6e\u6e29\u5ea6\u4e0a\u9650",
+                "type": "Integer",
+                "values": "{\"unit\":\"\u2103\",\"min\":-500,\"max\":1100,\"scale\":1,\"step\":1}"
+            },
+            {
+                "code": "upper_temp_switch",
+                "name": "\u9ad8\u6e29\u62a5\u8b66\u5f00\u5173",
+                "type": "Boolean",
+                "values": "{}"
+            },
+            {
+                "code": "upper_alarm_temp",
+                "name": "\u9ad8\u6e29\u544a\u8b66\u6e29\u5ea6",
+                "type": "Integer",
+                "values": "{\"unit\":\"\u2103\",\"min\":-500,\"max\":1100,\"scale\":1,\"step\":1}"
+            },
+            {
+                "code": "lower_temp",
+                "name": "\u8bbe\u7f6e\u6e29\u5ea6\u4e0b\u9650",
+                "type": "Integer",
+                "values": "{\"unit\":\"\u2103\",\"min\":-500,\"max\":1100,\"scale\":1,\"step\":1}"
+            },
+            {
+                "code": "lower_temp_switch",
+                "name": "\u4f4e\u6e29\u62a5\u8b66\u5f00\u5173",
+                "type": "Boolean",
+                "values": "{}"
+            },
+            {
+                "code": "lower_alarm_temp",
+                "name": "\u4f4e\u6e29\u544a\u8b66\u6e29\u5ea6",
+                "type": "Integer",
+                "values": "{\"unit\":\"\u2103\",\"min\":-500,\"max\":1100,\"scale\":1,\"step\":1}"
+            },
+            {
+                "code": "temp_correction",
+                "name": "\u6e29\u5ea6\u6821\u51c6",
+                "type": "Integer",
+                "values": "{\"min\":-90,\"max\":90,\"scale\":1,\"step\":1}"
+            },
+            {
+                "code": "fault",
+                "name": "\u6545\u969c\u544a\u8b66",
+                "type": "Bitmap",
+                "values": "{\"label\":[\"cooling_fault\",\"heating_fault\",\"temp_dif_fault\"]}"
+            },
+            {
+                "code": "humidity_value",
+                "name": "\u5f53\u524d\u6e7f\u5ea6",
+                "type": "Integer",
+                "values": "{\"unit\":\"%\",\"min\":0,\"max\":1000,\"scale\":1,\"step\":1}"
+            },
+            {
+                "code": "maxhum_set",
+                "name": "\u6e7f\u5ea6\u4e0a\u9650\u8bbe\u7f6e",
+                "type": "Integer",
+                "values": "{\"unit\":\"%\",\"min\":0,\"max\":1000,\"scale\":1,\"step\":1}"
+            },
+            {
+                "code": "minihum_set",
+                "name": "\u6e7f\u5ea6\u4e0b\u9650\u8bbe\u7f6e",
+                "type": "Integer",
+                "values": "{\"unit\":\"%\",\"min\":0,\"max\":1000,\"scale\":1,\"step\":1}"
+            },
+            {
+                "code": "cycle_time",
+                "name": "\u5206\u6bb5\u5b9a\u65f6",
+                "type": "String",
+                "values": "{}"
+            }
+        ]
+    },
+    "success": true,
+    "t": 1672940537086,
+    "tid": "4bebe4318d2011ed817f5a5f1d3b12c7"
+}
+ Status of device named : Two-way temperature and humidity switch
+{
+    "result": [
+        {
+            "code": "switch_all",
+            "value": true
+        },
+        {
+            "code": "switch_1",
+            "value": false
+        },
+        {
+            "code": "switch_2",
+            "value": false
+        },
+        {
+            "code": "temp_current",
+            "value": 151
+        },
+        {
+            "code": "upper_temp",
+            "value": -500
+        },
+        {
+            "code": "upper_temp_switch",
+            "value": false
+        },
+        {
+            "code": "upper_alarm_temp",
+            "value": 0
+        },
+        {
+            "code": "lower_temp",
+            "value": -500
+        },
+        {
+            "code": "lower_temp_switch",
+            "value": false
+        },
+        {
+            "code": "lower_alarm_temp",
+            "value": 0
+        },
+        {
+            "code": "temp_correction",
+            "value": 0
+        },
+        {
+            "code": "fault",
+            "value": 0
+        },
+        {
+            "code": "humidity_value",
+            "value": 0
+        },
+        {
+            "code": "maxhum_set",
+            "value": 0
+        },
+        {
+            "code": "minihum_set",
+            "value": 0
+        },
+        {
+            "code": "cycle_time",
+            "value": ""
+        }
+    ],
+    "success": true,
+    "t": 1672940537348,
+    "tid": "4c1345b58d2011ed84f4f6d732894979"
+}
+
+Device Name: Fingerbot
+id :bf2c97gmfhxgbmh9
+key : c719bed630cca2bb
+mac : DC:23:4D:BB:5B:42
+ Properties of device named : Fingerbot
+{
+    "result": {
+        "category": "szjqr",
+        "functions": [
+            {
+                "code": "switch",
+                "desc": "{}",
+                "name": "\u5f00\u5173",
+                "type": "Boolean",
+                "values": "{}"
+            },
+            {
+                "code": "mode",
+                "desc": "{\"range\":[\"click\",\"switch\"]}",
+                "name": "\u6a21\u5f0f",
+                "type": "Enum",
+                "values": "{\"range\":[\"click\",\"switch\"]}"
+            },
+            {
+                "code": "arm_down_percent",
+                "desc": "{\"unit\":\"\",\"min\":51,\"max\":100,\"scale\":0,\"step\":1}",
+                "name": "\u4e0b\u964d\u5e45\u5ea6",
+                "type": "Integer",
+                "values": "{\"unit\":\"\",\"min\":51,\"max\":100,\"scale\":0,\"step\":1}"
+            },
+            {
+                "code": "click_sustain_time",
+                "desc": "{\"unit\":\"s\",\"min\":0,\"max\":10,\"scale\":0,\"step\":1}",
+                "name": "\u53ef\u56de\u5f39\u65f6\u95f4\u8bbe\u7f6e",
+                "type": "Integer",
+                "values": "{\"unit\":\"s\",\"min\":0,\"max\":10,\"scale\":0,\"step\":1}"
+            },
+            {
+                "code": "arm_up_percent",
+                "desc": "{\"min\":0,\"max\":50,\"scale\":0,\"step\":1}",
+                "name": "\u4e0a\u5347\u5e45\u5ea6",
+                "type": "Integer",
+                "values": "{\"min\":0,\"max\":50,\"scale\":0,\"step\":1}"
+            },
+            {
+                "code": "tap_enable",
+                "desc": "{}",
+                "name": "\u8f7b\u89e6\u5f00\u5173",
+                "type": "Boolean",
+                "values": "{}"
+            }
+        ],
+        "status": [
+            {
+                "code": "switch",
+                "name": "\u5f00\u5173",
+                "type": "Boolean",
+                "values": "{}"
+            },
+            {
+                "code": "mode",
+                "name": "\u6a21\u5f0f",
+                "type": "Enum",
+                "values": "{\"range\":[\"click\",\"switch\"]}"
+            },
+            {
+                "code": "arm_down_percent",
+                "name": "\u4e0b\u964d\u5e45\u5ea6",
+                "type": "Integer",
+                "values": "{\"unit\":\"\",\"min\":51,\"max\":100,\"scale\":0,\"step\":1}"
+            },
+            {
+                "code": "click_sustain_time",
+                "name": "\u53ef\u56de\u5f39\u65f6\u95f4\u8bbe\u7f6e",
+                "type": "Integer",
+                "values": "{\"unit\":\"s\",\"min\":0,\"max\":10,\"scale\":0,\"step\":1}"
+            },
+            {
+                "code": "battery_percentage",
+                "name": "\u7535\u6c60\u7535\u91cf",
+                "type": "Integer",
+                "values": "{\"unit\":\"%\",\"min\":0,\"max\":100,\"scale\":0,\"step\":1}"
+            },
+            {
+                "code": "arm_up_percent",
+                "name": "\u4e0a\u5347\u5e45\u5ea6",
+                "type": "Integer",
+                "values": "{\"min\":0,\"max\":50,\"scale\":0,\"step\":1}"
+            },
+            {
+                "code": "tap_enable",
+                "name": "\u8f7b\u89e6\u5f00\u5173",
+                "type": "Boolean",
+                "values": "{}"
+            }
+        ]
+    },
+    "success": true,
+    "t": 1672940537566,
+    "tid": "4c339b528d2011ed84f4f6d732894979"
+}
+ Status of device named : Fingerbot
+{
+    "result": [
+        {
+            "code": "switch",
+            "value": true
+        },
+        {
+            "code": "mode",
+            "value": "click"
+        },
+        {
+            "code": "arm_down_percent",
+            "value": 59
+        },
+        {
+            "code": "click_sustain_time",
+            "value": 1
+        },
+        {
+            "code": "battery_percentage",
+            "value": 100
+        },
+        {
+            "code": "arm_up_percent",
+            "value": 7
+        },
+        {
+            "code": "tap_enable",
+            "value": false
+        }
+    ],
+    "success": true,
+    "t": 1672940537820,
+    "tid": "4c5a44898d2011edbdcf768159807b40"
+}
+
+Device Name: Bluetooth Gateway
+id :bfb83a7a9c33befd11ajjp
+key : c719bed630cca2bb
+mac : d8:1f:12:33:11:bc
+ Properties of device named : Bluetooth Gateway
+{
+    "result": {
+        "category": "cz"
+    },
+    "success": true,
+    "t": 1672940538066,
+    "tid": "4c81a3638d2011ed817f5a5f1d3b12c7"
+}
+ Status of device named : Bluetooth Gateway
+{
+    "result": [],
+    "success": true,
+    "t": 1672940538336,
+    "tid": "4ca993788d2011ed84f4f6d732894979"
+}
+
+Device Name: SWITCH02
+id :bf0e00da7f4df8c38dxvqu
+key : a723153202de9942
+mac : cc:8c:bf:57:48:f1
+ Properties of device named : SWITCH02
+{
+    "result": {
+        "category": "tdq",
+        "functions": [
+            {
+                "code": "switch_1",
+                "desc": "{}",
+                "name": "\u5f00\u51731",
+                "type": "Boolean",
+                "values": "{}"
+            },
+            {
+                "code": "countdown_1",
+                "desc": "{\"unit\":\"s\",\"min\":0,\"max\":86400,\"scale\":0,\"step\":1}",
+                "name": "\u5f00\u51731\u5012\u8ba1\u65f6",
+                "type": "Integer",
+                "values": "{\"unit\":\"s\",\"min\":0,\"max\":86400,\"scale\":0,\"step\":1}"
+            },
+            {
+                "code": "relay_status",
+                "desc": "{\"range\":[\"0\",\"1\",\"2\"]}",
+                "name": "\u4e0a\u7535\u72b6\u6001\u8bbe\u7f6e",
+                "type": "Enum",
+                "values": "{\"range\":[\"0\",\"1\",\"2\"]}"
+            },
+            {
+                "code": "random_time",
+                "desc": "{\"maxlen\":255}",
+                "name": "\u968f\u673a\u5b9a\u65f6",
+                "type": "String",
+                "values": "{\"maxlen\":255}"
+            },
+            {
+                "code": "cycle_time",
+                "desc": "{\"maxlen\":255}",
+                "name": "\u5faa\u73af\u5b9a\u65f6",
+                "type": "String",
+                "values": "{\"maxlen\":255}"
+            },
+            {
+                "code": "switch_inching",
+                "desc": "{\"maxlen\":255}",
+                "name": "\u70b9\u52a8\u5f00\u5173",
+                "type": "String",
+                "values": "{\"maxlen\":255}"
+            }
+        ],
+        "status": [
+            {
+                "code": "switch_1",
+                "name": "\u5f00\u51731",
+                "type": "Boolean",
+                "values": "{}"
+            },
+            {
+                "code": "countdown_1",
+                "name": "\u5f00\u51731\u5012\u8ba1\u65f6",
+                "type": "Integer",
+                "values": "{\"unit\":\"s\",\"min\":0,\"max\":86400,\"scale\":0,\"step\":1}"
+            },
+            {
+                "code": "relay_status",
+                "name": "\u4e0a\u7535\u72b6\u6001\u8bbe\u7f6e",
+                "type": "Enum",
+                "values": "{\"range\":[\"0\",\"1\",\"2\"]}"
+            },
+            {
+                "code": "random_time",
+                "name": "\u968f\u673a\u5b9a\u65f6",
+                "type": "String",
+                "values": "{\"maxlen\":255}"
+            },
+            {
+                "code": "cycle_time",
+                "name": "\u5faa\u73af\u5b9a\u65f6",
+                "type": "String",
+                "values": "{\"maxlen\":255}"
+            },
+            {
+                "code": "switch_inching",
+                "name": "\u70b9\u52a8\u5f00\u5173",
+                "type": "String",
+                "values": "{\"maxlen\":255}"
+            }
+        ]
+    },
+    "success": true,
+    "t": 1672940538555,
+    "tid": "4ccbb6718d2011ed817f5a5f1d3b12c7"
+}
+ Status of device named : SWITCH02
+{
+    "result": [
+        {
+            "code": "switch_1",
+            "value": false
+        },
+        {
+            "code": "countdown_1",
+            "value": 0
+        },
+        {
+            "code": "relay_status",
+            "value": "0"
+        },
+        {
+            "code": "random_time",
+            "value": ""
+        },
+        {
+            "code": "cycle_time",
+            "value": ""
+        },
+        {
+            "code": "switch_inching",
+            "value": ""
+        }
+    ],
+    "success": true,
+    "t": 1672940538795,
+    "tid": "4cf009028d2011ed817f5a5f1d3b12c7"
+}

@@ -58,6 +58,7 @@ class class_buffer_log:
 	
 		if self.__no_heading_yet:
 			self.__no_heading_yet = False
+
 			self.__log_file = open(self.__log_filename_save_as,'w')
 			for hdg_ind in range(0,len(log_headings)):
 				self.__log_file.write(log_headings[hdg_ind] + ",")
